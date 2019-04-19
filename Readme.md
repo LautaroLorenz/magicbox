@@ -30,4 +30,4 @@ para controlar en tiempo real todas las provisiones que se almacenen en el inter
 
 ### Contenido del repositorio
 En el presente repositorio usted encontrará todo lo necesario para poder reproducir una copia  
-funcional de *Magicbox*
+funcional de *Magicbox*.
