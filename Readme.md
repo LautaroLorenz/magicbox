@@ -26,8 +26,8 @@ anticipación para poder actuar de forma inteligente.
 * Ingreso de proveedores de producto en bandeja.
   
 Este producto se nutre de una variedad de sensores, actuadores, hardware, software y firmware para  
-para controlar en tiempo real todas las provisiones que se almacenen en el interior de *Magicbox*.
-
+para controlar en tiempo real todas las provisiones que se almacenen en el interior de *Magicbox*.  
+  
 ### Contenido del repositorio
 En el presente repositorio usted encontrará todo lo necesario para poder reproducir una copia  
 funcional de *Magicbox*.
