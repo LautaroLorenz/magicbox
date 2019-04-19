@@ -5,7 +5,7 @@
 [Flores Cristian](https://github.com/crisflores)  
 [Lorenz Lautaro Enrique](https://github.com/LautaroLorenz)  
 [Maciel Gabriel](https://github.com/maximilianonahuelmercado)  
-[Maximiliano Mercado](https://github.com/maximilianonahuelmercado)  
+[Mercado Maximiliano](https://github.com/maximilianonahuelmercado)  
 
 ### Presentación
 ¿Cuantas veces estamos tan ocupados que no podemos administrar el contenido de nuestro refrigerador?  
