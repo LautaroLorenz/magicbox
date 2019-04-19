@@ -13,7 +13,7 @@ Imagínese la respuesta de esa pregunta llevándola a los ajetreos diarios del a
   
 El equipo de Magicbox pretende con este proyecto plantear una solución a este tipo de inquietudes mediante  
 un contenedor inteligente, capas de avisarle cuando se están por acabar sus provisiones con la suficiente  
-anticipación para poder anticiparse de manera inteligente.  
+anticipación para poder actuar de forma inteligente.  
   
 ### Alcance y funcionamiento
 Magicbox le provee de las siguientes funcionalidades:
