@@ -1,11 +1,11 @@
 # Magicbox
 
 ### Una idea original de
-["Lorenz Marcelo Gabriel"]()  
-["Flores Cristian"](https://github.com/crisflores)  
-["Lorenz Lautaro Enrique"](https://github.com/LautaroLorenz)  
-["Maciel Gabriel"](https://github.com/maximilianonahuelmercado)  
-["Maximiliano Mercado"](https://github.com/maximilianonahuelmercado)  
+[Lorenz Marcelo Gabriel]()  
+[Flores Cristian](https://github.com/crisflores)  
+[Lorenz Lautaro Enrique](https://github.com/LautaroLorenz)  
+[Maciel Gabriel](https://github.com/maximilianonahuelmercado)  
+[Maximiliano Mercado](https://github.com/maximilianonahuelmercado)  
 
 ### Presentación
 ¿Cuantas veces estamos tan ocupados que no podemos
