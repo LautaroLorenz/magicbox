@@ -21,6 +21,13 @@ Magicbox le provee de las siguientes funcionalidades:
 * Iluminación interna en apertura de puerta.
 * Puerto output para mantenimiento de temperatura.
 * Aviso sonoro en caso de apertura de puerta prolongado.
-* Informe de temperatura.
+* Informe de temperatura con interfaz gráfica.
 * Contenido de bandeja programable.
 * Ingreso de proveedores de producto en bandeja.
+  
+Este producto se nutre de una variedad de sensores, actuadores, hardware, software y firmware para  
+para controlar en tiempo real todas las provisiones que se almacenen en el interior de Magicbox.
+
+### Contenido del repositorio
+En el presente repositorio usted encontrará todo lo necesario para poder reproducir una copia  
+funcional de Magicbox
