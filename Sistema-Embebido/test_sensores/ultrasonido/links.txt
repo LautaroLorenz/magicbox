@@ -1,0 +1,5 @@
+Libreria NewPing para el ultrasonido
+https://playground.arduino.cc/Code/NewPing/
+
+Tutorial HC-SR-04
+https://www.geekfactory.mx/tutoriales/tutoriales-arduino/sensor-ultrasonico-hc-sr04-y-arduino/#
