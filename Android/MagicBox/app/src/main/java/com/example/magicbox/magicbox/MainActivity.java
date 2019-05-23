@@ -26,6 +26,7 @@ public class MainActivity extends Activity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //maxi puto
         setContentView(R.layout.activity_main);
 
         b1 = (Button) findViewById(R.id.button);
