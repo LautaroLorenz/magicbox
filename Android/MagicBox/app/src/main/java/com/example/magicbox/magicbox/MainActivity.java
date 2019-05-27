@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Set;
 
+
 public class MainActivity extends Activity  {
     Button b1,b2,b3,b4;
     private BluetoothAdapter BA;
@@ -26,9 +27,8 @@ public class MainActivity extends Activity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //maxi puto
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
         b1 = (Button) findViewById(R.id.button);
         b2=(Button)findViewById(R.id.button2);
         b3=(Button)findViewById(R.id.button3);
@@ -59,7 +59,12 @@ public class MainActivity extends Activity  {
         startActivityForResult(getVisible, 0);
     }
 
+    public void ok(View v){
 
+        Intent i = new Intent(this, ProductoActivity.class);
+        startActivity(i);
+
+    }
     public void list(View v){
         pairedDevices = BA.getBondedDevices();
 
