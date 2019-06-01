@@ -1,51 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context=".MainActivity"
-    android:transitionGroup="true">
-
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/txtEstado"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="25dp"
-        android:text="MagicBox"
-        android:textColor="#3c4a8a"
-        android:textSize="35dp" />
-
+        android:gravity="center"
+        android:textSize="17sp"
+        android:textColor="#ff0000"
+        android:text="Bluetooth no conectado" />
 
     <Button
-        android:id="@+id/btnOn"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnActivar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_toStartOf="@+id/textView" />
+
+        android:text="Encender Bluetooth" />
 
     <Button
-        android:id="@+id/btnGet"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnEmparejar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/textView"
-        android:layout_below="@+id/btnOn"
-        />
+        android:enabled="false"
+        android:text="Ver dispositivos emparejados" />
 
-    <ListView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btnBuscar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/deviceList"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/btnGet"
-        android:layout_alignStart="@+id/btnGet"
-        android:layout_below="@+id/textView2" />
+        android:enabled="false"
+        android:text="Escanear dispositivos" />
 
-
-
-</RelativeLayout>
+</LinearLayout>
