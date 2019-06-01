@@ -4,6 +4,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +19,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.magicbox.magicbox.sensores.Giroscopio;
+import com.example.magicbox.magicbox.sensores.SensorProximidad;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -32,12 +40,16 @@ public class MainActivity extends AppCompatActivity {
     UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String TAG = "Main";
 
+    private SensorProximidad sensorProximidad;
+    private Giroscopio giroscopio;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
+        /*
         bt = BluetoothAdapter.getDefaultAdapter();
 
         Button btnOn = findViewById(R.id.btnOn);
@@ -101,9 +113,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
-
-        }
+        }); */
 
 
+        sensorProximidad = new SensorProximidad();
+        sensorProximidad.iniciar(this);
+
+        giroscopio= new Giroscopio();
+        giroscopio.iniciar(this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorProximidad.continuar();
+        giroscopio.continuar();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorProximidad.pausar();
+        giroscopio.pausar();
+    }
+}
