@@ -1,6 +1,7 @@
 package com.example.magicbox.magicbox;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,6 +43,17 @@ public class ProductoActivity extends MainActivity{
         pesoMax = (TextView) findViewById(R.id.textView6);
         imagen = (ImageView) findViewById(R.id.imageView2);
         am = getAssets();
+
+        nombre.setText(getIntent().getExtras().getString("nombre"));
+
+    }
+
+    public void seleccionar(View v){
+
+        Intent i = new Intent(ProductoActivity.this, ProductListActivity.class);
+        startActivity(i);
+
+
     }
 
     public void consulta(View v) throws IOException {
@@ -50,6 +62,7 @@ public class ProductoActivity extends MainActivity{
         String n = nombre.getText().toString();
         String im;
         Cursor fila = bd.rawQuery("select peso, imagen from producto where nombre='" + n + "'", null);
+        System.out.print(n);
         if(fila.moveToFirst()){
             pesoMax.setText(fila.getString(0));
 
