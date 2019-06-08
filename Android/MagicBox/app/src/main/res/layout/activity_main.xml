@@ -34,4 +34,10 @@
         android:enabled="false"
         android:text="Escanear dispositivos" />
 
+    <Button
+        android:id="@+id/btnVerProductos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ver listado de productos" />
+
 </LinearLayout>

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,24 +12,18 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnActivar;
     private Button btnEmparejar;
     private Button btnBuscar;
+    private Button btnVerProductos;
 
     private ProgressDialog mProgressDlg;
 
@@ -70,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     btnActivar = (Button) findViewById(R.id.btnActivar);
     btnEmparejar = (Button) findViewById(R.id.btnEmparejar);
     btnBuscar = (Button) findViewById(R.id.btnBuscar);
+    btnVerProductos = (Button) findViewById(R.id.btnVerProductos);
 
     //Se crea un adaptador para podermanejar el bluethoot del celular
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -106,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
             btnBuscar.setOnClickListener(btnBuscarListener);
 
             btnActivar.setOnClickListener(btnActivarListener);
+
+            btnVerProductos.setOnClickListener(btnVerListadoProductosListener);
 
             //se determina si esta activado el bluethoot
             if (mBluetoothAdapter.isEnabled())
@@ -278,6 +275,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             mBluetoothAdapter.startDiscovery();
+            Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+
+            newIntent.putParcelableArrayListExtra("device.list", mDeviceList);
+
+            startActivity(newIntent);
         }
     };
 
@@ -294,6 +296,14 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivityForResult(intent, 1000);
             }
+        }
+    };
+
+    private View.OnClickListener btnVerListadoProductosListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(MainActivity.this, ProductListActivity.class);
+            startActivity(intent);
         }
     };
 

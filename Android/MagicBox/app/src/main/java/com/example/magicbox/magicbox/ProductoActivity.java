@@ -44,7 +44,13 @@ public class ProductoActivity extends MainActivity{
         imagen = (ImageView) findViewById(R.id.imageView2);
         am = getAssets();
 
-        nombre.setText(getIntent().getExtras().getString("nombre"));
+        Intent i = getIntent();
+        Bundle b = i.getExtras();
+        String s = b.getString("nombre");
+        String id = b.getString("id");
+        //nombre.setText(getIntent().getExtras().getString("nombre"));
+        nombre.setText(s);
+
 
     }
 
