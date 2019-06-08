@@ -42,6 +42,7 @@
         <activity android:name=".activity_comunicacion" />
 
         <activity android:name=".ProductoActivity" />
+        <activity android:name=".ProductListActivity"/>
     </application>
 
 </manifest>
