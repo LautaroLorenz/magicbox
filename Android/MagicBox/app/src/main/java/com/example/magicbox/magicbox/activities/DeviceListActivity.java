@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.activities;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,6 +14,9 @@ import android.content.IntentFilter;
 
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.magicbox.magicbox.DeviceListAdapter;
+import com.example.magicbox.magicbox.R;
 
 
 public class DeviceListActivity extends Activity {

@@ -1,13 +1,14 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.magicbox.magicbox.ListAdapter;
+import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
 
 import java.util.ArrayList;
@@ -21,20 +22,16 @@ public class ProductListActivity extends Activity{
 
     List<Product> listaProductos;
 
-     // Clase que guarda los productos en un arraylist y les devuelve a la activity producto
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.producto_list);
-
-
         productListView = (ListView) findViewById(R.id.lv_productos);
 
-
         this.cargarListaProductos();
-        listAdapter = new ListAdapter(this, R.layout.list_item_product, listaProductos);
 
+        listAdapter = new ListAdapter(this, R.layout.list_item_product, listaProductos);
         productListView.setAdapter(listAdapter);
 
         productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -45,22 +42,26 @@ public class ProductListActivity extends Activity{
                 intent.putExtra("nombre", ((Product)adapterView.getAdapter().getItem(position)).getName());
                 intent.putExtra("peso", ((Product)adapterView.getAdapter().getItem(position)).getPeso());
                 intent.putExtra("temperaturaIdeal", ((Product)adapterView.getAdapter().getItem(position)).getTemperaturaIdeal());
+                intent.putExtra("idRecursoImagen", ((Product)adapterView.getAdapter().getItem(position)).getIdRecursoImagen());
+                intent.putExtra("urlProveedores", ((Product)adapterView.getAdapter().getItem(position)).getUrlProveedores());
                 startActivity(intent);
             }
         });
-
     }
 
     // TODO: Se podrian leer de la BD
     public void cargarListaProductos() {
 
+        final String URL_SUPERMERCADOS = "https://www.google.com.ar/maps/search/supermercados/@-34.6801812,-58.5658106,15z/data=!3m1!4b1";
+        final String URL_VERDULERIAS = "https://www.google.com.ar/maps/search/verduleria/@-34.6801453,-58.5658106,15z/data=!3m1!4b1";
+
         this.listaProductos = new ArrayList<Product>();
 
-        Product p1 = new Product("1", "Salchichas", "200gr", "13ºC");
-        Product p2 = new Product("2", "Huevos", "120gr", "16ºC");
-        Product p3 = new Product("3", "Patys", "340gr", "9ºC");
-        Product p4 = new Product("4", "Manzanas", "280gr", "14ºC");
-        Product p5 = new Product("5", "Paquetes de merca", "400gr", "12ºC");
+        Product p1 = new Product("Salchichas", "200gr", "13ºC", R.drawable.lechuga, URL_VERDULERIAS);
+        Product p2 = new Product("Huevos", "120gr", "16ºC", R.drawable.huevos, URL_SUPERMERCADOS);
+        Product p3 = new Product("Atún", "340gr", "9ºC", R.drawable.atun, URL_SUPERMERCADOS);
+        Product p4 = new Product("Manzanas", "280gr", "14ºC", R.drawable.lechuga, URL_VERDULERIAS);
+        Product p5 = new Product("Paquetes de merca", "400gr", "12ºC", R.drawable.lechuga, URL_SUPERMERCADOS);
 
         this.listaProductos.add(p1);
         this.listaProductos.add(p2);

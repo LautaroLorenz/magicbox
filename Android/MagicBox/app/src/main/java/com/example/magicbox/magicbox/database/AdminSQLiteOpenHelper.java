@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

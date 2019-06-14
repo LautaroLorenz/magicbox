@@ -6,20 +6,19 @@ public class Product {
     String name;
     String peso;
     String temperaturaIdeal;
+    int idRecursoImagen;
+    String urlProveedores;
 
-    public Product(String id, String name, String peso, String temperaturaIdeal) {
-        this.id = id;
+    public Product() {
+
+    }
+
+    public Product(String name, String peso, String temperaturaIdeal, int idRecursoImagen, String urlProveedores) {
         this.name = name;
         this.peso = peso;
         this.temperaturaIdeal = temperaturaIdeal;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.idRecursoImagen = idRecursoImagen;
+        this.urlProveedores = urlProveedores;
     }
 
     public String getName() {
@@ -44,5 +43,21 @@ public class Product {
 
     public void setTemperaturaIdeal(String temperaturaIdeal) {
         this.temperaturaIdeal = temperaturaIdeal;
+    }
+
+    public int getIdRecursoImagen() {
+        return idRecursoImagen;
+    }
+
+    public void setIdRecursoImagen(int idRecursoImagen) {
+        this.idRecursoImagen = idRecursoImagen;
+    }
+
+    public String getUrlProveedores() {
+        return urlProveedores;
+    }
+
+    public void setUrlProveedores(String urlProveedores) {
+        this.urlProveedores = urlProveedores;
     }
 }

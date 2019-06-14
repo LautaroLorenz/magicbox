@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -20,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.magicbox.magicbox.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_main);
+    btnVerProductos = (Button) findViewById(R.id.btnVerProductos);
+    btnVerProductos.setOnClickListener(btnVerListadoProductosListener);
+
+
+    /*
 
     //Se definen los componentes del layout
     txtEstado = (TextView) findViewById(R.id.txtEstado);
@@ -128,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
         //se define (registra) el handler que captura los broadcast anterirmente mencionados.
         registerReceiver(mReceiver, filter);
+
+        */
     }
     @Override
     //Cuando se llama al metodo OnPausa se cancela la busqueda de dispositivos bluethoot
@@ -348,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
             case MULTIPLE_PERMISSIONS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permissions granted.
-                    enableComponent(); // Now you call here what ever you want :)
+                    //enableComponent(); // Now you call here what ever you want :)
                 } else {
                     String perStr = "";
                     for (String per : permissions) {
