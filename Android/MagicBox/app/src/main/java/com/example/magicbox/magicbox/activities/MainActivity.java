@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     btnVerProductos = (Button) findViewById(R.id.btnVerProductos);
     btnVerProductos.setOnClickListener(btnVerListadoProductosListener);
 
-
     /*
 
     //Se definen los componentes del layout

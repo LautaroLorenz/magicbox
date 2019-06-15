@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.magicbox.magicbox.asyncTasks.ActualizarTemperaturaTask;
 import com.example.magicbox.magicbox.database.AdminSQLiteOpenHelper;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
@@ -29,10 +30,13 @@ public class ProductoActivity extends MainActivity {
     private TextView pesoView;
     private TextView nombreView;
     private TextView temperaturaIdealView;
+    private TextView temperaturaView;
     private ImageView imagenView;
     private Button btnCambiarProducto;
     private Button btnProveedores;
 
+    // Tarea en segundo plano para actualizar la temp en tiempo real
+    ActualizarTemperaturaTask actualizarTemperaturaTask;
 
     // AssetManager
    private AssetManager am;
@@ -52,6 +56,7 @@ public class ProductoActivity extends MainActivity {
         nombreView = (TextView) findViewById(R.id.product_nombre);
         pesoView = (TextView) findViewById(R.id.product_peso);
         temperaturaIdealView = (TextView) findViewById(R.id.product_temperaturaIdeal);
+        temperaturaView = (TextView) findViewById(R.id.text_temperatura);
 
         btnCambiarProducto = (Button) findViewById(R.id.btnCambiarProducto);
         btnProveedores = (Button) findViewById(R.id.btnProveedores);
@@ -75,9 +80,31 @@ public class ProductoActivity extends MainActivity {
 
         btnCambiarProducto.setOnClickListener(btnVerListadoProductosListener);
         btnProveedores.setOnClickListener(btnVerProveedoresListener);
+
+        actualizarTemperaturaTask = new ActualizarTemperaturaTask(temperaturaView);
+        actualizarTemperaturaTask.execute();
+
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        actualizarTemperaturaTask.cancel(true);
+    }
 
+    /*
+        @Override public void onPause() {
+            super.onPause();
+            actualizarTemperaturaTask.cancel(true);
+        }
+        */
+/*
+    @Override
+    protected void onResume() {
+        super.onResume();
+        actualizarTemperaturaTask.execute();
+    }
+*/
     // ------------------------------------------------------------
     //          Listeners de los ButtonView
     // ------------------------------------------------------------
