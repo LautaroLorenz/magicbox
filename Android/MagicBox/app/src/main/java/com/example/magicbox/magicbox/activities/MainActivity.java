@@ -150,14 +150,14 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    @Override
+   /* @Override
     //Cuando se detruye la Acivity se quita el registro de los brodcast. Apartir de este momento no se
     //recibe mas broadcast del SO. del bluethoot
     public void onDestroy() {
         unregisterReceiver(mReceiver);
 
         super.onDestroy();
-    }
+    }*/
 
     private void showEnabled() {
         txtEstado.setText("Bluetooth Habilitar");

@@ -21,6 +21,7 @@ public class ActualizarTemperaturaTask extends AsyncTask<Void, Integer, Boolean>
     protected Boolean doInBackground(Void... params) {
 
         int temperaturaObtenida;
+        boolean puertaIsOpen = false;
         for(int i=1; i<=5; i++) {
             temperaturaObtenida = obtenerTemperatura();
             publishProgress(temperaturaObtenida);

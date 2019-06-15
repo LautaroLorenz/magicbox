@@ -14,9 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.magicbox.magicbox.asyncTasks.ActualizarTemperaturaTask;
-import com.example.magicbox.magicbox.database.AdminSQLiteOpenHelper;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
+import com.example.magicbox.magicbox.sensores.Giroscopio;
+import com.example.magicbox.magicbox.sensores.SensorProximidad;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +26,7 @@ import java.io.InputStream;
 public class ProductoActivity extends MainActivity {
 
     // ------------------------------------------------------------
-    //          Views
+    //          VIEWS
     // ------------------------------------------------------------
     private TextView pesoView;
     private TextView nombreView;
@@ -35,6 +36,13 @@ public class ProductoActivity extends MainActivity {
     private Button btnCambiarProducto;
     private Button btnProveedores;
 
+    // ------------------------------------------------------------
+    //          SENSORES ANDROID
+    // ------------------------------------------------------------
+    private SensorProximidad sensorProximidad;
+    private Giroscopio giroscopio;
+
+
     // Tarea en segundo plano para actualizar la temp en tiempo real
     ActualizarTemperaturaTask actualizarTemperaturaTask;
 
@@ -43,7 +51,7 @@ public class ProductoActivity extends MainActivity {
 
 
     // ------------------------------------------------------------
-    //          Producto actual en el contenedor
+    //          PRODUCTO ACTUAL EN EL CONTENEDOR
     // ------------------------------------------------------------
    private Product productoActual;
 
@@ -84,27 +92,28 @@ public class ProductoActivity extends MainActivity {
         actualizarTemperaturaTask = new ActualizarTemperaturaTask(temperaturaView);
         actualizarTemperaturaTask.execute();
 
+        sensorProximidad = new SensorProximidad();
+        sensorProximidad.iniciar(this);
+
+        giroscopio= new Giroscopio();
+        giroscopio.iniciar(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorProximidad.continuar();
+        giroscopio.continuar();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         actualizarTemperaturaTask.cancel(true);
+        sensorProximidad.pausar();
+        giroscopio.pausar();
     }
 
-    /*
-        @Override public void onPause() {
-            super.onPause();
-            actualizarTemperaturaTask.cancel(true);
-        }
-        */
-/*
-    @Override
-    protected void onResume() {
-        super.onResume();
-        actualizarTemperaturaTask.execute();
-    }
-*/
     // ------------------------------------------------------------
     //          Listeners de los ButtonView
     // ------------------------------------------------------------
@@ -124,40 +133,4 @@ public class ProductoActivity extends MainActivity {
             startActivity(browserIntent);
         }
     };
-
-
-    public void seleccionar(View v){
-
-        Intent i = new Intent(ProductoActivity.this, ProductListActivity.class);
-        startActivity(i);
-    }
-
-    public void consulta(View v) throws IOException {
-        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "admin", null, 1);
-        SQLiteDatabase bd = admin.getWritableDatabase();
-        String n = nombreView.getText().toString();
-        String im;
-        Cursor fila = bd.rawQuery("select peso, imagen from producto where nombre='" + n + "'", null);
-        System.out.print(n);
-        if(fila.moveToFirst()){
-            pesoView.setText(fila.getString(0));
-
-            InputStream is = am.open(fila.getString(1));
-
-            String[] imgPath = am.list("img");
-
-            for(int i=0; i<imgPath.length; i++){
-                System.out.println(imgPath[i]);
-            }
-
-                //Bitmap bm = BitmapFactory.decodeStream(is);
-                //imagen.setImageBitmap(bm);
-
-        }
-        else{
-            Toast.makeText(this, "No existe ningun producto con ese nombre", Toast.LENGTH_SHORT).show();
-            bd.close();
-        }
-    }
-
 }
