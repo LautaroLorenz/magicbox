@@ -1,0 +1,7 @@
+E --> devuelve el estado (Apagado|Frio|Calor).
+B --> apaga el buffer (aun no esta implementado)
+d - } (caracteres ascii 100 - 125) --> setea la temperatura entre 0 y 25.
+V --> devuelve el volumen ocupado en el recinto.
+P --> devuelve el peso del objeto en el recinto.
+T --> devuelve la tempuratura sensada. (no la tempuratura propuesta).
+S --> devuelve peso, volumen y temperatura.
