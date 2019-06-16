@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.magicbox.magicbox.ListAdapter;
+import com.example.magicbox.magicbox.ProductListAdapter;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
 
@@ -18,7 +18,7 @@ public class ProductListActivity extends Activity{
 
     private ListView productListView;
     List<String> list = new ArrayList<String>();
-    ListAdapter listAdapter;
+    ProductListAdapter productListAdapter;
 
     List<Product> listaProductos;
 
@@ -29,10 +29,14 @@ public class ProductListActivity extends Activity{
         setContentView(R.layout.producto_list);
         productListView = (ListView) findViewById(R.id.lv_productos);
 
+
+        final String deviceName = getIntent().getExtras().getString("deviceName");
+        final String deviceAddress = getIntent().getExtras().getString("deviceAddress");
+
         this.cargarListaProductos();
 
-        listAdapter = new ListAdapter(this, R.layout.list_item_product, listaProductos);
-        productListView.setAdapter(listAdapter);
+        productListAdapter = new ProductListAdapter(this, R.layout.list_item_product, listaProductos);
+        productListView.setAdapter(productListAdapter);
 
         productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -44,6 +48,7 @@ public class ProductListActivity extends Activity{
                 intent.putExtra("temperaturaIdeal", ((Product)adapterView.getAdapter().getItem(position)).getTemperaturaIdeal());
                 intent.putExtra("idRecursoImagen", ((Product)adapterView.getAdapter().getItem(position)).getIdRecursoImagen());
                 intent.putExtra("urlProveedores", ((Product)adapterView.getAdapter().getItem(position)).getUrlProveedores());
+                intent.putExtra("deviceAddress", deviceAddress);
                 startActivity(intent);
             }
         });

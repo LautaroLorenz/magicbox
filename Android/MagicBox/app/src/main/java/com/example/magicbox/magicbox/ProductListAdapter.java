@@ -11,12 +11,12 @@ import com.example.magicbox.magicbox.models.Product;
 
 import java.util.List;
 
-public class ListAdapter extends ArrayAdapter<Product> {
+public class ProductListAdapter extends ArrayAdapter<Product> {
 
     private int resourceLayout;
     private Context mContext;
 
-    public ListAdapter(Context context, int resource, List<Product> items) {
+    public ProductListAdapter(Context context, int resource, List<Product> items) {
         super(context, resource, items);
         this.resourceLayout = resource;
         this.mContext = context;

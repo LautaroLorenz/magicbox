@@ -55,6 +55,8 @@ public class ProductoActivity extends MainActivity {
     // ------------------------------------------------------------
    private Product productoActual;
 
+    String addressDispositivo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +83,8 @@ public class ProductoActivity extends MainActivity {
         productoActual.setIdRecursoImagen(bundle.getInt("idRecursoImagen"));
         productoActual.setUrlProveedores(bundle.getString("urlProveedores"));
 
+        addressDispositivo = bundle.getString("deviceAddress");
+
         imagenView.setImageResource(productoActual.getIdRecursoImagen());
         nombreView.setText(productoActual.getName());
         pesoView.setText(productoActual.getPeso());
@@ -102,16 +106,16 @@ public class ProductoActivity extends MainActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorProximidad.continuar();
-        giroscopio.continuar();
+       // sensorProximidad.continuar();
+       // giroscopio.continuar();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        actualizarTemperaturaTask.cancel(true);
-        sensorProximidad.pausar();
-        giroscopio.pausar();
+       // actualizarTemperaturaTask.cancel(true);
+       // sensorProximidad.pausar();
+      //  giroscopio.pausar();
     }
 
     // ------------------------------------------------------------

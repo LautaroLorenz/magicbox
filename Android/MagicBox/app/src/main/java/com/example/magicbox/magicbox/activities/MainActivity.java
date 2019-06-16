@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.magicbox.magicbox.BluetoothActivity;
 import com.example.magicbox.magicbox.R;
 
 import java.util.ArrayList;
@@ -29,20 +31,28 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    // ------------------------------------------------------------
+    //          VIEWS DEL LAYOUT
+    // ------------------------------------------------------------
     private TextView txtEstado;
     private Button btnActivar;
     private Button btnEmparejar;
     private Button btnBuscar;
     private Button btnVerProductos;
 
+
+    // ------------------------------------------------------------
+    //          BLUETOOTH
+    // ------------------------------------------------------------
     private ProgressDialog mProgressDlg;
-
     private ArrayList<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
-
     private BluetoothAdapter mBluetoothAdapter;
 
-    public static final int MULTIPLE_PERMISSIONS = 10;
 
+    // ------------------------------------------------------------
+    //          PERMISOS
+    // ------------------------------------------------------------
+    public static final int MULTIPLE_PERMISSIONS = 10;
     String[] permissions= new String[]{
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
@@ -53,37 +63,31 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    //Metodo On create
     protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
-
     setContentView(R.layout.activity_main);
-    btnVerProductos = (Button) findViewById(R.id.btnVerProductos);
-    btnVerProductos.setOnClickListener(btnVerListadoProductosListener);
 
-    /*
-
-    //Se definen los componentes del layout
+    // Componentes del Layout
     txtEstado = (TextView) findViewById(R.id.txtEstado);
     btnActivar = (Button) findViewById(R.id.btnActivar);
     btnEmparejar = (Button) findViewById(R.id.btnEmparejar);
     btnBuscar = (Button) findViewById(R.id.btnBuscar);
     btnVerProductos = (Button) findViewById(R.id.btnVerProductos);
 
-    //Se crea un adaptador para podermanejar el bluethoot del celular
+
+    //Se crea un adaptador para poder manejar el bluetooth del celular
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    //Se Crea la ventana de dialogo que indica que se esta buscando dispositivos bluethoot
+    //Se Crea la ventana de dialogo que indica que se esta buscando dispositivos bluetooth
     mProgressDlg = new ProgressDialog(this);
 
-		mProgressDlg.setMessage("Buscando dispositivos...");
-		mProgressDlg.setCancelable(false);
+    mProgressDlg.setMessage("Buscando dispositivos...");
+    mProgressDlg.setCancelable(false);
 
     //se asocia un listener al boton cancelar para la ventana de dialogo ue busca los dispositivos bluethoot
-		mProgressDlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", btnCancelarDialogListener);
+        mProgressDlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", btnCancelarDialogListener);
 
-    //
 		if (checkPermissions())
     {
         enableComponent();
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            //si el celular soporta bluethoot, se definen los listener para los botones de la activity
+            // Si el celular soporta bluetooth, se definen los listener para los botones de la activity
             btnEmparejar.setOnClickListener(btnEmparejarListener);
 
             btnBuscar.setOnClickListener(btnBuscarListener);
@@ -133,68 +137,35 @@ public class MainActivity extends AppCompatActivity {
 
         //se define (registra) el handler que captura los broadcast anterirmente mencionados.
         registerReceiver(mReceiver, filter);
-
-        */
     }
+
     @Override
-    //Cuando se llama al metodo OnPausa se cancela la busqueda de dispositivos bluethoot
+    //Cuando se llama al metodo OnPause se cancela la busqueda de dispositivos bluetooth
     public void onPause()
     {
-
         if (mBluetoothAdapter != null) {
             if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery();
             }
         }
-
         super.onPause();
     }
 
-   /* @Override
+    @Override
     //Cuando se detruye la Acivity se quita el registro de los brodcast. Apartir de este momento no se
     //recibe mas broadcast del SO. del bluethoot
     public void onDestroy() {
         unregisterReceiver(mReceiver);
 
         super.onDestroy();
-    }*/
-
-    private void showEnabled() {
-        txtEstado.setText("Bluetooth Habilitar");
-        txtEstado.setTextColor(Color.BLUE);
-
-        btnActivar.setText("Desactivar");
-        btnActivar.setEnabled(true);
-
-        btnEmparejar.setEnabled(true);
-        btnBuscar.setEnabled(true);
     }
 
-    private void showDisabled() {
-        txtEstado.setText("Bluetooth Deshabilitado");
-        txtEstado.setTextColor(Color.RED);
 
-        btnActivar.setText("Activar");
-        btnActivar.setEnabled(true);
 
-        btnEmparejar.setEnabled(false);
-        btnBuscar.setEnabled(false);
-    }
 
-    private void showUnsupported() {
-        txtEstado.setText("Bluetooth no es soportado por el dispositivo movil");
-
-        btnActivar.setText("Activar");
-        btnActivar.setEnabled(false);
-
-        btnEmparejar.setEnabled(false);
-        btnBuscar.setEnabled(false);
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
+    // ------------------------------------------------------------
+    //          BROADCAST RECEIVER BLUETOOTH
+    // ------------------------------------------------------------
     //Handler que captura los brodacast que emite el SO al ocurrir los eventos del bluethoot
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -211,12 +182,11 @@ public class MainActivity extends AppCompatActivity {
                 //Si esta activado
                 if (state == BluetoothAdapter.STATE_ON)
                 {
-                    showToast("Activar");
-
+                    showToast("Bluetooth activado");
                     showEnabled();
                 }
             }
-            //Si se inicio la busqueda de dispositivos bluethoot
+            //Si se inicio la busqueda de dispositivos bluetooth
             else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
             {
                 //Creo la lista donde voy a mostrar los dispositivos encontrados
@@ -225,38 +195,39 @@ public class MainActivity extends AppCompatActivity {
                 //muestro el cuadro de dialogo de busqueda
                 mProgressDlg.show();
             }
-            //Si finalizo la busqueda de dispositivos bluethoot
+            //si se encontro un dispositivo bluetooth
+            else if (BluetoothDevice.ACTION_FOUND.equals(action))
+            {
+                //Se agregan sus datos a una lista de dispositivos encontrados
+                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                mDeviceList.add(device);
+                showToast("Dispositivo Encontrado:" + device.getName());
+            }
+            //Si finalizo la busqueda de dispositivos bluetooth
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
             {
                 //se cierra el cuadro de dialogo de busqueda
                 mProgressDlg.dismiss();
 
-                //se inicia el activity DeviceListActivity pasandole como parametros, por intent,
-                //el listado de dispositovos encontrados
-                Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-
-                newIntent.putParcelableArrayListExtra("device.list", mDeviceList);
-
-                startActivity(newIntent);
-            }
-            //si se encontro un dispositivo bluethoot
-            else if (BluetoothDevice.ACTION_FOUND.equals(action))
-            {
-                //Se lo agregan sus datos a una lista de dispositivos encontrados
-                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                mDeviceList.add(device);
-                showToast("Dispositivo Encontrado:" + device.getName());
+                if (mDeviceList.size() > 0) {
+                    Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+                    newIntent.putParcelableArrayListExtra("device.list", mDeviceList);
+                    startActivity(newIntent);
+                } else {
+                    showToast("No se encontraron dispositivos");
+                }
             }
         }
     };
 
 
-    //Metodo que actua como Listener de los eventos que ocurren en los componentes graficos de la activty
+
+    // ------------------------------------------------------------
+    //          LISTENERS DE LOS BOTONES
+    // ------------------------------------------------------------
     private View.OnClickListener btnEmparejarListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
             if (pairedDevices == null || pairedDevices.size() == 0)
@@ -266,11 +237,9 @@ public class MainActivity extends AppCompatActivity {
             else
             {
                 ArrayList<BluetoothDevice> list = new ArrayList<BluetoothDevice>();
-
                 list.addAll(pairedDevices);
 
-                Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
-
+                Intent intent = new Intent(MainActivity.this, PairedDeviceListActivity.class);
                 intent.putParcelableArrayListExtra("device.list", list);
 
                 startActivity(intent);
@@ -282,11 +251,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             mBluetoothAdapter.startDiscovery();
-            Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-
-            newIntent.putParcelableArrayListExtra("device.list", mDeviceList);
-
-            startActivity(newIntent);
+            //Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+            //newIntent.putParcelableArrayListExtra("device.list", mDeviceList);
+            //startActivity(newIntent);
         }
     };
 
@@ -309,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener btnVerListadoProductosListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, ProductListActivity.class);
+            Intent intent = new Intent(MainActivity.this, BluetoothActivity.class);
             startActivity(intent);
         }
     };
@@ -325,16 +292,17 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    //Metodo que chequea si estan habilitados los permisos
+
+    // ------------------------------------------------------------
+    //          METODOS PARA CHEQUEAR PERMISOS
+    // ------------------------------------------------------------
     private  boolean checkPermissions() {
         int result;
         List<String> listPermissionsNeeded = new ArrayList<>();
 
-        //Se chequea si la version de Android es menor a la 6
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
-
 
         for (String p:permissions) {
             result = ContextCompat.checkSelfPermission(this,p);
@@ -368,6 +336,48 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+
+    // ------------------------------------------------------------
+    //          METODOS AUXILIARES
+    // ------------------------------------------------------------
+    private void showEnabled() {
+        txtEstado.setText("Bluetooth habilitado");
+        txtEstado.setTextColor(Color.BLUE);
+
+        btnActivar.setText("Desactivar");
+        btnActivar.setEnabled(true);
+
+        btnEmparejar.setEnabled(true);
+        btnBuscar.setEnabled(true);
+        btnVerProductos.setEnabled(true);
+    }
+
+    private void showDisabled() {
+        txtEstado.setText("Bluetooth Deshabilitado");
+        txtEstado.setTextColor(Color.RED);
+
+        btnActivar.setText("Activar");
+        btnActivar.setEnabled(true);
+
+        btnEmparejar.setEnabled(false);
+        btnBuscar.setEnabled(false);
+        btnVerProductos.setEnabled(false);
+    }
+
+    private void showUnsupported() {
+        txtEstado.setText("Bluetooth no es soportado por el dispositivo movil");
+
+        btnActivar.setText("Activar");
+        btnActivar.setEnabled(false);
+
+        btnEmparejar.setEnabled(false);
+        btnBuscar.setEnabled(false);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 }
