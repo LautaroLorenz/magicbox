@@ -77,7 +77,7 @@ void loop() {
   if (estaon == LOW) {
     digitalWrite(luzint, LOW);
     isSet = false;
-    comprobarBt();
+    comprobarBt(HIGH);
     sensorTemp.requestTemperatures();   //Se envía el comando para leer la temperatura
     temp = sensorTemp.getTempCByIndex(0); //Se obtiene la temperatura en ºC
     
@@ -95,7 +95,6 @@ void loop() {
     }
   } else {
     digitalWrite(luzint, HIGH);
-    comprobarBt();
     apagar(LOW);
     if(!isSet)
     {
@@ -111,7 +110,7 @@ void loop() {
   delay(1000);
 }
 
-void comprobarBt(){
+void comprobarBt(int estadoPuerta){
   if(BT.available()){
     lectura = BT.read();
     if(lectura == "84"){
@@ -134,6 +133,10 @@ void comprobarBt(){
       Serial.print("Se establecio la Temperatura en: ");
       Serial.print(temprop);
       Serial.println(" °C");
+      dtostrf(temprop,5,2,msj); //Llamada a la función
+      BT.write("Se establecio la Temperatura en: ");
+      BT.write(msj);
+      BT.write(" °C\n");
     }
     if(lectura == "69"){
       enviarEstado();
@@ -169,6 +172,13 @@ void enviarEstado(){
   Serial.print("Estado = ");
   Serial.print(estado);
   Serial.println(" ");
+  if(estado == "Frio"){
+    BT.write("El estado es: Frio");
+  } else if (estado == "Calor"){
+    BT.write("El estado es: Calor");
+  } else {
+    BT.write("El estado es: Apagado");
+  }
 }
 
 void enviarVolumen(){
