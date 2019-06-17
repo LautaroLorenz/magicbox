@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/txtEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:textColor="#ff0000"
+        android:text="Bluetooth off" />
+
+    <Button
+        android:id="@+id/btnActivar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"        
+        android:text="Activado" />
+    
+    <Button
+        android:id="@+id/btnEmparejar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"        
+        android:enabled="false"
+        android:text="Paired devices" />
+    
+    <Button
+        android:id="@+id/btnBuscar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"        
+        android:enabled="false"
+        android:text="Escanear dispositivos" />
+
+    <Button
+        android:id="@+id/btnComunication"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:text="Comunicacion" />
+
+</LinearLayout>

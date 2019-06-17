@@ -6,6 +6,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.TextView;
+
+import com.example.magicbox.magicbox.activities.BluetoothMagicbox;
+
+import java.io.IOException;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -15,7 +20,15 @@ public class Giroscopio {
     private Sensor gyroscopeSensor;
     SensorEventListener gyroscopeSensorListener;
 
-    public void iniciar(final Activity activity) {
+    private TextView pesoView;
+    private TextView volumenView;
+
+    public Giroscopio(TextView pesoView, TextView volumenView) {
+        this.pesoView = pesoView;
+        this.volumenView = volumenView;
+    }
+
+    public void iniciar(final Activity activity, final BluetoothMagicbox btMagicbox) {
         // Obtenemos acceso al giroscopio
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
 
@@ -31,10 +44,37 @@ public class Giroscopio {
         gyroscopeSensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if(sensorEvent.values[2] > 0.5f) { // anticlockwise
-                    activity.getWindow().getDecorView().setBackgroundColor(Color.BLUE);
-                } else if(sensorEvent.values[2] < -0.5f) { // clockwise
+
+                if(sensorEvent.values[2] > 0.8f) { // anticlockwise
+                    activity.getWindow().getDecorView().setBackgroundColor(Color.CYAN);
+
+                    // Actualiza volumen
+                    try {
+                        btMagicbox.write(BluetoothMagicbox.GET_VOLUMEN);
+                       // Thread.sleep(100);
+                        String readMessage = btMagicbox.read(BluetoothMagicbox.VOLUMEN_SIZE);
+                        if(readMessage != null)
+                            volumenView.setText(readMessage);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if(sensorEvent.values[2] < -0.8f) { // clockwise
                     activity.getWindow().getDecorView().setBackgroundColor(Color.YELLOW);
+
+                    // Actualiza peso
+                    try {
+                        btMagicbox.write(BluetoothMagicbox.GET_VOLUMEN);
+                        //Thread.sleep(3000);
+                        String readMessage = btMagicbox.read(BluetoothMagicbox.VOLUMEN_SIZE);
+                        if(readMessage != null)
+                            pesoView.setText(readMessage);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
 

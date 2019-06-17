@@ -133,10 +133,10 @@ void comprobarBt(int estadoPuerta){
       Serial.print("Se establecio la Temperatura en: ");
       Serial.print(temprop);
       Serial.println(" °C");
-      dtostrf(temprop,5,2,msj); //Llamada a la función
-      BT.write("Se establecio la Temperatura en: ");
-      BT.write(msj);
-      BT.write(" °C\n");
+      //dtostrf(temprop,5,2,msj); //Llamada a la función
+      //BT.write("Se establecio la Temperatura en: ");
+      //BT.write(msj);
+      //BT.write(" °C\n");
     }
     if(lectura == "69"){
       enviarEstado();
@@ -152,9 +152,9 @@ void enviarTemp(){
   Serial.print("Temperatura = ");
   Serial.print(temp);
   Serial.println(" °C");
-  BT.write("Temperatura = ");
+  //BT.write("Temperatura = ");
   BT.write(msj);
-  BT.write(" °C\n");
+  //BT.write(" °C\n");
 }
 
 void enviarPeso(){
@@ -163,9 +163,9 @@ void enviarPeso(){
   Serial.print("Peso Medido = ");
   Serial.print(peso);
   Serial.println(" Kg");
-  BT.write("Peso Medido = ");
+  //BT.write("Peso Medido = ");
   BT.write(msj);
-  BT.write(" Kg\n");
+  //BT.write(" Kg\n");
 }
 
 void enviarEstado(){
@@ -173,11 +173,11 @@ void enviarEstado(){
   Serial.print(estado);
   Serial.println(" ");
   if(estado == "Frio"){
-    BT.write("El estado es: Frio");
+    BT.write("Frio");
   } else if (estado == "Calor"){
-    BT.write("El estado es: Calor");
+    BT.write("Calor");
   } else {
-    BT.write("El estado es: Apagado");
+    BT.write("Apagado");
   }
 }
 
@@ -194,9 +194,9 @@ void enviarVolumen(){
   Serial.print("Espacio Volumetrico ocupado = ");
   Serial.print(total);
   Serial.println(" Cm^3");
-  BT.write("Espacio Volumetrico ocupado = ");
+  //BT.write("Espacio Volumetrico ocupado = ");
   BT.write(msj);
-  BT.write(" Cm^3\n");
+  //BT.write(" Cm^3\n");
 }
 
 void encenderFrio()

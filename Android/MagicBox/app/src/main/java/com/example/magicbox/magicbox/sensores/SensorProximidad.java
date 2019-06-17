@@ -7,7 +7,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.magicbox.magicbox.activities.BluetoothMagicbox;
+
+import org.w3c.dom.Text;
+
+import java.io.IOException;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -17,7 +24,13 @@ public class SensorProximidad {
     private Sensor proximitySensor;
     private SensorEventListener proximitySensorListener;
 
-    public void iniciar(final Activity activity) {
+    private TextView temperaturaView;
+
+    public SensorProximidad(TextView temperaturaView) {
+        this.temperaturaView = temperaturaView;
+    }
+
+    public void iniciar(final Activity activity, final BluetoothMagicbox btMagicbox) {
         // Obtenemos acceso al sensor de proximidad
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
 
@@ -35,10 +48,23 @@ public class SensorProximidad {
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if(sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
                     // Detected something nearby
-                    activity.getWindow().getDecorView().setBackgroundColor(Color.RED);
+                    activity.getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+                    try {
+                        btMagicbox.write(BluetoothMagicbox.GET_VOLUMEN);
+                        Thread.sleep(100);
+                        String readMessage = btMagicbox.read(BluetoothMagicbox.VOLUMEN_SIZE);
+                        if(readMessage != null)
+                            temperaturaView.setText(readMessage);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     // Nothing is nearby
-                    activity.getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+                    activity.getWindow().getDecorView().setBackgroundColor(Color.YELLOW);
                 }
             }
 
