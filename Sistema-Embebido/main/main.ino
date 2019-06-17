@@ -133,9 +133,9 @@ void comprobarBt(int estadoPuerta){
       Serial.print("Se establecio la Temperatura en: ");
       Serial.print(temprop);
       Serial.println(" °C");
-      dtostrf(temprop,5,2,msj); //Llamada a la función
+      //dtostrf(temprop,5,2,msj); //Llamada a la función
       //BT.write("Se establecio la Temperatura en: ");
-      BT.write(msj);
+      //BT.write(msj);
       //BT.write(" °C\n");
     }
     if(lectura == "69"){
