@@ -30,7 +30,6 @@ public class ProductListActivity extends Activity{
         productListView = (ListView) findViewById(R.id.lv_productos);
 
 
-        final String deviceName = getIntent().getExtras().getString("deviceName");
         final String deviceAddress = getIntent().getExtras().getString("deviceAddress");
 
         this.cargarListaProductos();
