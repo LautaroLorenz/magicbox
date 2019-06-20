@@ -20,9 +20,9 @@ public class BluetoothMagicbox {
     public static final String GET_ALL = "S";
 
     // TAMAÑO EN BYTES DE LAS RESPUESTAS
-    public static final int VOLUMEN_SIZE = 42;
-    public static final int PESO_SIZE = 15;
-    public static final int TEMPERATURA_SIZE = 15;
+    public static final int VOLUMEN_SIZE = 10;
+    public static final int PESO_SIZE = 10;
+    public static final int TEMPERATURA_SIZE = 10;
 
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private boolean socketBusy = false;
@@ -34,9 +34,11 @@ public class BluetoothMagicbox {
     private OutputStream mmOutStream;
 
     String deviceAddress;
+    private boolean connected;
 
     public BluetoothMagicbox(String deviceAddress) throws IOException {
         this.deviceAddress = deviceAddress;
+        this.connected = false;
     }
 
     public void conectar() throws IOException {
@@ -49,6 +51,8 @@ public class BluetoothMagicbox {
 
         mmInStream = btSocket.getInputStream();
         mmOutStream =  btSocket.getOutputStream();
+
+        connected = true;
     }
 
     public boolean isBusy() {
@@ -59,16 +63,25 @@ public class BluetoothMagicbox {
         int bytesLeidos = 0;
 
         byte[] buffer = new byte[bytesToRead];
-        this.socketBusy = true;
 
         try {
             bytesLeidos = mmInStream.read(buffer);
+            //mmInStream.skip(20);
         } catch (IOException e) {
             e.printStackTrace();
         }
         String readMessage = new String(buffer, 0, bytesLeidos);
 
-        return bytesLeidos == bytesToRead? readMessage : null;
+        //return bytesLeidos > bytesToRead? readMessage : null;
+        return readMessage;
+    }
+
+    public void skip(long nBytes) {
+        try {
+            mmInStream.skip(nBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void write(String input) throws IOException {
@@ -90,6 +103,7 @@ public class BluetoothMagicbox {
                 mmOutStream.close();
                 mmInStream.close();
                 btSocket.close();
+                connected = false;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,4 +111,7 @@ public class BluetoothMagicbox {
     }
 
 
+    public boolean isConnected() {
+        return connected;
+    }
 }

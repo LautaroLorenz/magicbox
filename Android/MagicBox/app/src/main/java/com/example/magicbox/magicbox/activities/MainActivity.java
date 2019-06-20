@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private Button btnActivar;
     private Button btnEmparejar;
     private Button btnBuscar;
-    private Button btnVerProductos;
-
 
     // ------------------------------------------------------------
     //          BLUETOOTH
@@ -73,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
     btnActivar = (Button) findViewById(R.id.btnActivar);
     btnEmparejar = (Button) findViewById(R.id.btnEmparejar);
     btnBuscar = (Button) findViewById(R.id.btnBuscar);
-    btnVerProductos = (Button) findViewById(R.id.btnVerProductos);
-
 
     //Se crea un adaptador para poder manejar el bluetooth del celular
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -110,8 +106,6 @@ public class MainActivity extends AppCompatActivity {
             btnBuscar.setOnClickListener(btnBuscarListener);
 
             btnActivar.setOnClickListener(btnActivarListener);
-
-            btnVerProductos.setOnClickListener(btnVerListadoProductosListener);
 
             //se determina si esta activado el bluethoot
             if (mBluetoothAdapter.isEnabled())
@@ -273,14 +267,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener btnVerListadoProductosListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, BluetoothActivity.class);
-            startActivity(intent);
-        }
-    };
-
 
     private DialogInterface.OnClickListener btnCancelarDialogListener = new DialogInterface.OnClickListener() {
         @Override
@@ -351,7 +337,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnEmparejar.setEnabled(true);
         btnBuscar.setEnabled(true);
-        btnVerProductos.setEnabled(true);
     }
 
     private void showDisabled() {
@@ -363,7 +348,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnEmparejar.setEnabled(false);
         btnBuscar.setEnabled(false);
-        btnVerProductos.setEnabled(false);
     }
 
     private void showUnsupported() {

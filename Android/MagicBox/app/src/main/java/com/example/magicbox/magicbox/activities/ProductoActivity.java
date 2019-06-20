@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
@@ -11,13 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.magicbox.magicbox.asyncTasks.ActualizarTemperaturaTask;
+import com.example.magicbox.magicbox.MagicboxBluetoothService;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
 import com.example.magicbox.magicbox.sensores.Giroscopio;
 import com.example.magicbox.magicbox.sensores.SensorProximidad;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ProductoActivity extends MainActivity {
 
@@ -27,7 +32,6 @@ public class ProductoActivity extends MainActivity {
     private TextView pesoView;
     private TextView volumenView;
     private TextView nombreView;
-    private TextView temperaturaIdealView;
     private TextView temperaturaView;
     private ImageView imagenView;
     private Button btnCambiarProducto;
@@ -40,9 +44,6 @@ public class ProductoActivity extends MainActivity {
     private Giroscopio giroscopio;
 
 
-    // Tarea en segundo plano para actualizar la temp en tiempo real
-    ActualizarTemperaturaTask actualizarTemperaturaTask;
-
 
     // ------------------------------------------------------------
     //          PRODUCTO ACTUAL EN EL CONTENEDOR
@@ -53,14 +54,11 @@ public class ProductoActivity extends MainActivity {
     // ------------------------------------------------------------
     //          COMUNICACION
     // ------------------------------------------------------------
-    BluetoothMagicbox btMagicbox;
-
-    Handler bluetoothIn;
-    final int handlerState = 0; //used to identify handler message
-
-    private ActualizarTemperaturaThread mConnectedThread;
-
+    MagicboxBluetoothService btMagicboxService;
+    Handler handlerBluetoothIn;
     String address;
+
+    List<String> log;
 
 
     @Override
@@ -69,14 +67,6 @@ public class ProductoActivity extends MainActivity {
         setContentView(R.layout.activity_producto);
 
         Bundle bundle = getIntent().getExtras();
-
-        address = bundle.getString("deviceAddress");
-
-        try {
-            btMagicbox = new BluetoothMagicbox(address);
-        } catch (IOException e) {
-            handleBtError(e);
-        }
 
         productoActual = new Product();
         productoActual.setName(bundle.getString("nombre"));
@@ -89,7 +79,6 @@ public class ProductoActivity extends MainActivity {
         nombreView = (TextView) findViewById(R.id.product_nombre);
         pesoView = (TextView) findViewById(R.id.product_peso);
         volumenView = (TextView) findViewById(R.id.product_volumen);
-        temperaturaIdealView = (TextView) findViewById(R.id.product_temperaturaIdeal);
         temperaturaView = (TextView) findViewById(R.id.text_temperatura);
 
         btnCambiarProducto = (Button) findViewById(R.id.btnCambiarProducto);
@@ -98,29 +87,29 @@ public class ProductoActivity extends MainActivity {
         imagenView.setImageResource(productoActual.getIdRecursoImagen());
         nombreView.setText(productoActual.getName());
         pesoView.setText(productoActual.getPeso());
-        temperaturaIdealView.setText(productoActual.getTemperaturaIdeal());
 
         btnCambiarProducto.setOnClickListener(btnVerListadoProductosListener);
         btnProveedores.setOnClickListener(btnVerProveedoresListener);
 
-        //actualizarTemperaturaTask = new ActualizarTemperaturaTask(temperaturaView);
-       //actualizarTemperaturaTask.execute();
+        log = new ArrayList<>();
 
+        address = bundle.getString("deviceAddress");
 
+        handlerBluetoothIn = createHandlerBluetooth();
+        btMagicboxService = new MagicboxBluetoothService(address, handlerBluetoothIn);
 
-        sensorProximidad = new SensorProximidad(temperaturaView);
-        sensorProximidad.iniciar(this, btMagicbox);
+        btMagicboxService.start();
+
+        // Le mando la temperatura que necesita el producto actual del contenedor
+        // btMagicboxService.write("d");
+
+        sensorProximidad = new SensorProximidad();
+        sensorProximidad.iniciar(this, btMagicboxService);
 
 
 
         giroscopio = new Giroscopio(pesoView, volumenView);
-        giroscopio.iniciar(this, btMagicbox);
-
-
-
-        //defino el Handler de comunicacion entre el hilo Principal  el secundario.
-        //El hilo secundario va a mostrar informacion al layout a traves de este handler
-        //bluetoothIn = Handler_Msg_Hilo_Principal();
+        giroscopio.iniciar(this, btMagicboxService);
     }
 
 
@@ -153,96 +142,49 @@ public class ProductoActivity extends MainActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-        try {
-            btMagicbox.conectar();
-
-            // LEER TEMP DEL PRODUCTO Y ENVIARLA POR BLUETOOTH
-            btMagicbox.write(BluetoothMagicbox.SET_TEMPERATURA_14);
-
-            // THREAD QUE ACTUALIZA LA VIEW DE LA TEMPERATURA DEL CONTENEDOR
-            //mConnectedThread = new ActualizarTemperaturaThread(btMagicbox);
-            //mConnectedThread.start();
-
-        } catch (IOException e) {
-            handleBtError(e);
-        }
-
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        if (btMagicbox != null) {
-            //btMagicbox.close();
-        }
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     //Handler que permite mostrar datos en el Layout al hilo secundario
-    private Handler Handler_Msg_Hilo_Principal ()
-    {
+    private Handler createHandlerBluetooth () {
         return new Handler() {
             public void handleMessage(android.os.Message msg)
             {
                 //si se recibio un msj del hilo secundario
-                if (msg.what == handlerState)
+                if (msg.what == 0)
                 {
-                    //voy concatenando el msj
+                    String timestamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
                     String readMessage = (String) msg.obj;
-                    //recDataString.append(readMessage);
-                   // int endOfLineIndex = recDataString.indexOf("\r\n");
+                    Log.i("DATOS", readMessage);
 
-                    //cuando recibo toda una linea la muestro en el layout
-                    //if (endOfLineIndex > 0)
-                    //{
-                        //String dataInPrint = recDataString.substring(0, endOfLineIndex);
-                        temperaturaView.setText(readMessage);
+                    char magicboxCommand = readMessage.charAt(0);
+                    String medicion = readMessage.substring(1);
 
-                       // recDataString.delete(0, recDataString.length());
-                    //}
+                    String logString = timestamp + ": " + medicion;
+
+                    switch (magicboxCommand) {
+                        case 'T': temperaturaView.setText(medicion + " ºC");
+                        logString += " ºC";
+                        break;
+
+                        case 'P': pesoView.setText(medicion + " kg");
+                        logString += " kg";
+                        break;
+
+                        case 'V': volumenView.setText(medicion); // + Html.fromHtml(" cm<sup>3</sup>"));
+                        logString += "cm3";
+                        break;
+                    }
+
+                    log.add(logString);
                 }
             }
         };
 
-    }
-
-    private class ActualizarTemperaturaThread extends Thread {
-            private BluetoothMagicbox btMagicbox;
-
-            public ActualizarTemperaturaThread(BluetoothMagicbox btMagicbox) throws IOException {
-                    this.btMagicbox = btMagicbox;
-            }
-
-            public void run() {
-                byte[] buffer = new byte[256];
-                int bytes;
-
-                while (true)
-                {
-                    try {
-                        this.btMagicbox.write(btMagicbox.GET_TEMPERATURA);
-                    } catch (IOException e) {
-                        handleBtError(e);
-                    }
-
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //bytes = btMagicbox.read(buffer);
-                    //String readMessage = new String(buffer, 0, bytes);
-
-                    //bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
-
-                    try {
-                        Thread.sleep(4000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
     }
 
 

@@ -147,8 +147,8 @@ void comprobarBt(int estadoPuerta){
 void enviarTemp(){
   sensorTemp.requestTemperatures();   //Se envía el comando para leer la temperatura
   temp = sensorTemp.getTempCByIndex(0); //Se obtiene la temperatura en ºC
-
-  dtostrf(temp,5,2,msj); //Llamada a la función
+  msj[0] = 'T';
+  dtostrf(temp,5,2,msj+1); //Llamada a la función
   Serial.print("Temperatura = ");
   Serial.print(temp);
   Serial.println(" °C");
@@ -159,7 +159,8 @@ void enviarTemp(){
 
 void enviarPeso(){
   float peso = ((-1.6*(scale.getGram()))/1000);
-  dtostrf(peso,4,2,msj); //Llamada a la función
+  msj[0] = 'P';
+  dtostrf(peso,4,2,msj+1); //Llamada a la función
   Serial.print("Peso Medido = ");
   Serial.print(peso);
   Serial.println(" Kg");
@@ -173,11 +174,11 @@ void enviarEstado(){
   Serial.print(estado);
   Serial.println(" ");
   if(estado == "Frio"){
-    BT.write("Frio");
+    BT.write("E" + 1); // Frio
   } else if (estado == "Calor"){
-    BT.write("Calor");
+    BT.write("E" + 2); // Calor
   } else {
-    BT.write("Apagado");
+    BT.write("E" + 0); // Apagado
   }
 }
 
@@ -190,7 +191,8 @@ void enviarVolumen(){
   total *= (ancho - (uS / US_ROUNDTRIP_CM));
   uS = sonar3.ping_median();
   total *= (alto - (uS / US_ROUNDTRIP_CM));
-  dtostrf(total,5,2,msj);
+  msj[0] = 'V';
+  dtostrf(total,5,2,msj+1);
   Serial.print("Espacio Volumetrico ocupado = ");
   Serial.print(total);
   Serial.println(" Cm^3");
