@@ -77,17 +77,26 @@ public class MagicboxBluetoothService extends Thread{
         {
             byte[] buffer = new byte[256];
             int bytes;
-
+            int cantMensajes = 0;
+            StringBuilder readMessage = new StringBuilder();
             //el hilo secundario se queda esperando mensajes del HC05
             while (true)
             {
+
+
                 try
                 {
                     //se leen los datos del Bluethoot
                     bytes = mmInStream.read(buffer);
-                    String readMessage = new String(buffer, 0, bytes);
+                    cantMensajes++;
+                    readMessage.append(new String(buffer, 0, bytes));
                     Log.i("SERVICIO", readMessage + " " + bytes);
-                    handlerBluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
+
+                    if (cantMensajes == 2) {
+                        handlerBluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage.toString()).sendToTarget();
+                        cantMensajes = 0;
+                        readMessage = new StringBuilder();
+                    }
                 } catch (IOException e) {
                     break;
                 }
