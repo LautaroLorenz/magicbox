@@ -1,14 +1,17 @@
 package com.example.magicbox.magicbox.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ import com.example.magicbox.magicbox.sensores.SensorProximidad;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class ProductoActivity extends MainActivity {
@@ -33,9 +37,11 @@ public class ProductoActivity extends MainActivity {
     private TextView volumenView;
     private TextView nombreView;
     private TextView temperaturaView;
+    private TextView estadoView;
     private ImageView imagenView;
     private Button btnCambiarProducto;
     private Button btnProveedores;
+    private ImageButton btnMicrofono;
 
     // ------------------------------------------------------------
     //          SENSORES ANDROID
@@ -43,7 +49,7 @@ public class ProductoActivity extends MainActivity {
     private SensorProximidad sensorProximidad;
     private Giroscopio giroscopio;
 
-
+    private static final int REQ_CODE_SPEECH_INPUT = 100;
 
     // ------------------------------------------------------------
     //          PRODUCTO ACTUAL EN EL CONTENEDOR
@@ -80,9 +86,11 @@ public class ProductoActivity extends MainActivity {
         pesoView = (TextView) findViewById(R.id.product_peso);
         volumenView = (TextView) findViewById(R.id.product_volumen);
         temperaturaView = (TextView) findViewById(R.id.text_temperatura);
+        estadoView = (TextView) findViewById(R.id.text_estado);
 
         btnCambiarProducto = (Button) findViewById(R.id.btnCambiarProducto);
         btnProveedores = (Button) findViewById(R.id.btnProveedores);
+        btnMicrofono = (ImageButton) findViewById(R.id.btnMicrofono);
 
         imagenView.setImageResource(productoActual.getIdRecursoImagen());
         nombreView.setText(productoActual.getName());
@@ -90,6 +98,8 @@ public class ProductoActivity extends MainActivity {
 
         btnCambiarProducto.setOnClickListener(btnVerListadoProductosListener);
         btnProveedores.setOnClickListener(btnVerProveedoresListener);
+        btnMicrofono.setOnClickListener(btnMicrofonoListener);
+
 
         log = new ArrayList<>();
 
@@ -134,6 +144,12 @@ public class ProductoActivity extends MainActivity {
         }
     };
 
+    private View.OnClickListener btnMicrofonoListener= new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startVoiceInput();
+        }
+    };
 
     // ------------------------------------------------------------
     //          MANEJO DE LA COMUNICACION
@@ -159,12 +175,14 @@ public class ProductoActivity extends MainActivity {
                 {
                     String timestamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
                     String readMessage = (String) msg.obj;
-                    Log.i("DATOS", readMessage);
+                    Log.i("HANDLER", readMessage);
 
                     char magicboxCommand = readMessage.charAt(0);
-                    String medicion = readMessage.substring(1);
+                    String medicion = readMessage.substring(1); //, readMessage.indexOf('|'));
 
                     String logString = timestamp + ": " + medicion;
+
+                    boolean mensajeCorrecto = true;
 
                     switch (magicboxCommand) {
                         case 'T': temperaturaView.setText(medicion + " ºC");
@@ -175,16 +193,56 @@ public class ProductoActivity extends MainActivity {
                         logString += " kg";
                         break;
 
-                        case 'V': volumenView.setText(medicion); // + Html.fromHtml(" cm<sup>3</sup>"));
+                        case 'V': volumenView.setText(medicion + " cm" + Html.fromHtml("<sup>3</sup>"));
                         logString += "cm3";
+                        break;
+
+                        case 'E':
+                            String estado = medicion.equals('0')? "Apagado" : medicion.equals('1')? "Enfriando" : "Calentando";
+                            estadoView.setText(estado);
+                        break;
+
+                        default: mensajeCorrecto = false;
                         break;
                     }
 
-                    log.add(logString);
+                    if(mensajeCorrecto) {
+                        log.add(logString);
+                    }
                 }
             }
         };
 
+    }
+
+    private void startVoiceInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hola, hablele al Magicbox");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK && null != data) {
+
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            for (String s : result) {
+                Log.i("MICROFONO", s);
+                if (s.contains("alarma")) {
+                    Log.i("MICROFONO", "Apagando alarma");
+                } else if (s.contains("estado")) {
+                    Log.i("MICROFONO", "Estado contenedor");
+                    btMagicboxService.write("E");
+                }
+            }
+        }
     }
 
 
