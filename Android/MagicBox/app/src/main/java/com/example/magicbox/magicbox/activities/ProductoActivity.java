@@ -1,6 +1,7 @@
 package com.example.magicbox.magicbox.activities;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -94,7 +95,6 @@ public class ProductoActivity extends MainActivity {
 
         imagenView.setImageResource(productoActual.getIdRecursoImagen());
         nombreView.setText(productoActual.getName());
-        pesoView.setText(productoActual.getPeso());
 
         btnCambiarProducto.setOnClickListener(btnVerListadoProductosListener);
         btnProveedores.setOnClickListener(btnVerProveedoresListener);
@@ -105,7 +105,7 @@ public class ProductoActivity extends MainActivity {
 
         address = bundle.getString("deviceAddress");
 
-        handlerBluetoothIn = createHandlerBluetooth();
+        handlerBluetoothIn = createHandlerBluetooth(getApplicationContext());
         btMagicboxService = new MagicboxBluetoothService(address, handlerBluetoothIn);
 
         btMagicboxService.start();
@@ -115,8 +115,6 @@ public class ProductoActivity extends MainActivity {
 
         sensorProximidad = new SensorProximidad();
         sensorProximidad.iniciar(this, btMagicboxService);
-
-
 
         giroscopio = new Giroscopio(pesoView, volumenView);
         giroscopio.iniciar(this, btMagicboxService);
@@ -166,7 +164,7 @@ public class ProductoActivity extends MainActivity {
     }
 
     //Handler que permite mostrar datos en el Layout al hilo secundario
-    private Handler createHandlerBluetooth () {
+    private Handler createHandlerBluetooth (final Context context) {
         return new Handler() {
             public void handleMessage(android.os.Message msg)
             {
@@ -178,7 +176,7 @@ public class ProductoActivity extends MainActivity {
                     Log.i("HANDLER", readMessage);
 
                     char magicboxCommand = readMessage.charAt(0);
-                    String medicion = readMessage.substring(1); //, readMessage.indexOf('|'));
+                    String medicion = readMessage.substring(1, readMessage.indexOf('|')).replace("-", "");
 
                     String logString = timestamp + ": " + medicion;
 
@@ -194,13 +192,20 @@ public class ProductoActivity extends MainActivity {
                         break;
 
                         case 'V': volumenView.setText(medicion + " cm" + Html.fromHtml("<sup>3</sup>"));
-                        logString += "cm3";
+                        logString += " cm3";
                         break;
 
                         case 'E':
-                            String estado = medicion.equals('0')? "Apagado" : medicion.equals('1')? "Enfriando" : "Calentando";
-                            estadoView.setText(estado);
+                            String estadoContenedor = medicion.equals('0')? "Apagado" : medicion.equals('1')? "Enfriando" : "Calentando";
+                            estadoView.setText(estadoContenedor);
+                            logString += " Estado: " + estadoContenedor;
                         break;
+
+                        case 'Z':
+                            String estadoPuerta = medicion.equals('A')? "Abierta" : "Cerrada";
+                            Toast.makeText(context, "La puerta se encuentra " + estadoPuerta , Toast.LENGTH_LONG).show();
+                            logString += estadoPuerta;
+                            break;
 
                         default: mensajeCorrecto = false;
                         break;
@@ -237,12 +242,15 @@ public class ProductoActivity extends MainActivity {
                 Log.i("MICROFONO", s);
                 if (s.contains("alarma")) {
                     Log.i("MICROFONO", "Apagando alarma");
+                    btMagicboxService.write("B");
                 } else if (s.contains("estado")) {
                     Log.i("MICROFONO", "Estado contenedor");
                     btMagicboxService.write("E");
+                } else if(s.contains("puerta")) {
+                    btMagicboxService.write("Z");
+                    }
                 }
             }
-        }
     }
 
 

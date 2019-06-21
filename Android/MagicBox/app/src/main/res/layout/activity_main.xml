@@ -17,7 +17,7 @@
         android:id="@+id/btnActivar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:padding="20dp"
         android:text="Encender Bluetooth" />
 
     <Button
@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="false"
+        android:padding="20dp"
         android:text="Ver dispositivos emparejados" />
 
     <Button
@@ -32,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="false"
+        android:padding="20dp"
         android:text="Escanear dispositivos" />
 
 </LinearLayout>

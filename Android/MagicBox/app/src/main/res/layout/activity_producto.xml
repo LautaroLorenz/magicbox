@@ -58,8 +58,8 @@
 
     <ImageButton
         android:id="@+id/btnMicrofono"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_width="58dp"
+        android:layout_height="43dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -67,10 +67,10 @@
         android:src="@android:drawable/presence_audio_busy"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.554"
+        app:layout_constraintHorizontal_bias="0.549"
         app:layout_constraintStart_toEndOf="@+id/label-temperatura"
         app:layout_constraintTop_toBottomOf="@+id/title-contenedor"
-        app:layout_constraintVertical_bias="0.031" />
+        app:layout_constraintVertical_bias="0.001" />
 
     <TextView
         android:id="@+id/text_estado"
@@ -86,8 +86,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.846"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.172" />
+        app:layout_constraintTop_toBottomOf="@+id/btnMicrofono"
+        app:layout_constraintVertical_bias="0.032" />
 
 
     <TextView
