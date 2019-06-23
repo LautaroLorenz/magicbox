@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.adapters;
 
 import java.util.List;
 import android.bluetooth.BluetoothDevice;
@@ -12,13 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-/**
- * Device list adapter.
- * 
- * @author Lorensius W. L. T <lorenz@londatiga.net>
- *
- */
-public class DeviceListAdapter extends BaseAdapter{
+import com.example.magicbox.magicbox.R;
+
+public class DeviceListAdapter extends BaseAdapter {
 	private LayoutInflater mInflater;	
 	private List<BluetoothDevice> mData;
 	private OnPairButtonClickListener mListener;
@@ -51,13 +47,12 @@ public class DeviceListAdapter extends BaseAdapter{
 		ViewHolder holder;
 		
 		if (convertView == null) {			
-			convertView			=  mInflater.inflate(R.layout.list_item_device, null);
+			convertView	=  mInflater.inflate(R.layout.list_item_device, null);
 			
-			holder 				= new ViewHolder();
-			
-			holder.nameTv		= (TextView) convertView.findViewById(R.id.tv_name);
-			holder.addressTv 	= (TextView) convertView.findViewById(R.id.tv_address);
-			holder.pairBtn		= (Button) convertView.findViewById(R.id.btn_pair);
+			holder = new ViewHolder();
+			holder.nameTv = (TextView) convertView.findViewById(R.id.tv_name);
+			holder.addressTv = (TextView) convertView.findViewById(R.id.tv_address);
+			holder.pairBtn = (Button) convertView.findViewById(R.id.btn_pair);
 			
 			convertView.setTag(holder);
 		} else {

@@ -10,7 +10,6 @@ public class Product {
     String urlProveedores;
 
     public Product() {
-
     }
 
     public Product(String name, String peso, String temperaturaIdeal, int idRecursoImagen, String urlProveedores) {

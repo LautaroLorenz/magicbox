@@ -8,7 +8,6 @@ public class HistorialItem implements Serializable {
     String medicion;
 
     public HistorialItem() {
-
     }
 
     public HistorialItem(String timestamp, String medicion) {

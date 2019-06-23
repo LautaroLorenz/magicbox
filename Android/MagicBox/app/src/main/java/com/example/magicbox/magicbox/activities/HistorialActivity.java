@@ -4,10 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 
-import com.example.magicbox.magicbox.ProductListAdapter;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.HistorialItem;
-import com.example.magicbox.magicbox.HistorialListAdapter;
+import com.example.magicbox.magicbox.adapters.HistorialListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

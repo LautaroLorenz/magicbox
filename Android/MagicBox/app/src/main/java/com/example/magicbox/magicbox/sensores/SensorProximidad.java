@@ -7,15 +7,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.magicbox.magicbox.MagicboxBluetoothService;
-import com.example.magicbox.magicbox.activities.BluetoothMagicbox;
-
-import org.w3c.dom.Text;
-
-import java.io.IOException;
+import com.example.magicbox.magicbox.bluetooth.MagicboxBluetoothService;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -29,28 +22,22 @@ public class SensorProximidad {
     }
 
     public void iniciar(final Activity activity, final MagicboxBluetoothService btMagicbox) {
-        // Obtenemos acceso al sensor de proximidad
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
 
-        // Instancio un sensor de proximidad
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
-        // Verifico que el sensor este disponible
         if(proximitySensor == null) {
-            activity.finish(); // Sensor no disponible
+            activity.finish();
         }
 
-        // Creo listener para atender los eventos del sensor
         proximitySensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if(sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
-                    // Detected something nearby
                     activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(83, 109, 254));
                     btMagicbox.write("T".getBytes());
 
                 } else {
-                    // Nothing is nearby
                     activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(250, 250, 250));
                 }
             }
@@ -60,16 +47,13 @@ public class SensorProximidad {
             }
         };
 
-        // Registro el listener, especificando el intervalo entre mediciones en ms
         sensorManager.registerListener(proximitySensorListener, proximitySensor, 2 * 1000 * 1000);
     }
 
-    // Deja de capturar eventos del sensor
     public void pausar() {
         sensorManager.unregisterListener(proximitySensorListener);
     }
 
-    // Continuo capturando eventos del sensor
     public void continuar() {
         sensorManager.registerListener(proximitySensorListener, proximitySensor, 2 * 1000 * 1000);
     }

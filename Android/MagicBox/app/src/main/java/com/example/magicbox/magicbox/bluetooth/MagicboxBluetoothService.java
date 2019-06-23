@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,59 +11,45 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class MagicboxBluetoothService extends Thread{
+public class MagicboxBluetoothService extends Thread {
 
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothAdapter btAdapter;
-        private BluetoothDevice btDevice;
-        private BluetoothSocket btSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
+    private BluetoothDevice btDevice;
+    private BluetoothSocket btSocket;
+    private InputStream mmInStream;
+    private OutputStream mmOutStream;
 
-        private Handler handlerBluetoothIn;
-        private int handlerState = 0;
+    private Handler handlerBluetoothIn;
+    private int handlerState = 0;
+    private String item;
+    private boolean finalizado = false;
 
-
-    //Constructor de la clase del hilo secundario
-        public MagicboxBluetoothService(String deviceAddress, Handler handlerBluetoothIn)
-        {
-            this.handlerBluetoothIn = handlerBluetoothIn;
+        public MagicboxBluetoothService(String deviceAddress, final String item) {
+            this.item = item;
 
             btAdapter = BluetoothAdapter.getDefaultAdapter();
+
             btDevice = btAdapter.getRemoteDevice(deviceAddress);
-
-            try
-            {
+            try {
                 btSocket = btDevice.createRfcommSocketToServiceRecord(BTMODULEUUID);
+               // btSocket.close();
             }
-            catch (IOException e)
-            {
-                // catch exception
+            catch (IOException e) {
+                Log.i("SOCKET","fallo dispositivo "+ item);
             }
-            // Establish the Bluetooth socket connection.
-            try
-            {
+            try {
                 btSocket.connect();
+                Log.i("SOCKET","conectado "+ item);
             }
-            catch (IOException e)
-            {
-                try
-                {
-                    btSocket.close();
-                }
-                catch (IOException e2)
-                {
-                    //insert code to deal with this
-                }
+            catch (IOException e) {
+                Log.i("SOCKET","fallo " + item + " " + e.toString());
             }
-
 
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
-            try
-            {
-                //Create I/O streams for connection
+            try {
                 tmpIn = btSocket.getInputStream();
                 tmpOut = btSocket.getOutputStream();
             } catch (IOException e) { }
@@ -72,23 +58,27 @@ public class MagicboxBluetoothService extends Thread{
             mmOutStream = tmpOut;
         }
 
-        //metodo run del hilo, que va a entrar en una espera activa para recibir los msjs del HC05
-        public void run()
-        {
+        public void setHandler(Handler handlerBluetoothIn) {
+            this.handlerBluetoothIn = handlerBluetoothIn;
+        }
+
+        public  void setItem(String item) {
+                this.item = item;
+        }
+
+        public void run() {
+            Log.i("THREAD", "Iniciado " + item);
             byte[] buffer = new byte[256];
             int bytes;
             int cantMensajes = 0;
             StringBuilder readMessage = new StringBuilder();
-            //el hilo secundario se queda esperando mensajes del HC05
-            while (true)
-            {
-                try
-                {
-                    //se leen los datos del Bluethoot
+
+            while (!finalizado) {
+                try {
                     bytes = mmInStream.read(buffer);
                     cantMensajes++;
                     readMessage.append(new String(buffer, 0, bytes));
-
+                    Log.i("SERVICE", readMessage + " " + item);
                     if (cantMensajes == 2) {
 
                         if(readMessage.indexOf("|") != readMessage.length() - 1) {
@@ -101,17 +91,33 @@ public class MagicboxBluetoothService extends Thread{
                         readMessage = new StringBuilder();
                     }
                 } catch (IOException e) {
-                    break;
                 }
+            }
+
+            try {
+                this.finalize();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+
+        }
+
+        public void write(byte[] input) {
+            try {
+                mmOutStream.write(input);
+            } catch (IOException e) {
             }
         }
 
-        //write method
-        public void write(byte[] input) {
-            try {
-                mmOutStream.write(input);                //write bytes over BT connection via outstream
-            } catch (IOException e) {
-                //if you cannot write, close the application
-            }
+        public void finalizar () {
+        try {
+            mmInStream.close();
+            mmOutStream.close();
+            btSocket.close();
+        } catch (IOException e1) {
+            //e1.printStackTrace();
+        }
+
+        this.interrupt();
         }
 }

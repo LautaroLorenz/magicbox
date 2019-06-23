@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
 
 import java.util.List;

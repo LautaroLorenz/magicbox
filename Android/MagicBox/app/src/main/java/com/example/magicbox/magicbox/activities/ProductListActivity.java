@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.magicbox.magicbox.ProductListAdapter;
+import com.example.magicbox.magicbox.adapters.ProductListAdapter;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.Product;
 
@@ -53,7 +53,6 @@ public class ProductListActivity extends Activity{
         });
     }
 
-    // TODO: Se podrian leer de la BD
     public void cargarListaProductos() {
 
         final String URL_SUPERMERCADOS = "https://www.google.com.ar/maps/search/supermercados/@-34.6801812,-58.5658106,15z/data=!3m1!4b1";

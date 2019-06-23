@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.magicbox.magicbox.MagicboxBluetoothService;
+import com.example.magicbox.magicbox.bluetooth.MagicboxBluetoothService;
 import com.example.magicbox.magicbox.R;
 import com.example.magicbox.magicbox.models.HistorialItem;
 import com.example.magicbox.magicbox.models.Product;
@@ -33,9 +33,6 @@ import java.util.Locale;
 
 public class ProductoActivity extends MainActivity {
 
-    // ------------------------------------------------------------
-    //          VIEWS
-    // ------------------------------------------------------------
     private TextView pesoView;
     private TextView volumenView;
     private TextView nombreView;
@@ -47,33 +44,27 @@ public class ProductoActivity extends MainActivity {
     private Button btnHistorial;
     private ImageButton btnMicrofono;
 
-    // ------------------------------------------------------------
-    //          SENSORES ANDROID
-    // ------------------------------------------------------------
     private SensorProximidad sensorProximidad;
     private Giroscopio giroscopio;
 
     private static final int REQ_CODE_SPEECH_INPUT = 100;
 
-    // ------------------------------------------------------------
-    //          PRODUCTO ACTUAL EN EL CONTENEDOR
-    // ------------------------------------------------------------
    private Product productoActual;
 
-    // ------------------------------------------------------------
-    //          COMUNICACION
-    // ------------------------------------------------------------
-    MagicboxBluetoothService btMagicboxService;
-    Handler handlerBluetoothIn;
-    String address;
+    private static MagicboxBluetoothService btMagicboxService;
+    private Handler handlerBluetoothIn;
+    private String address;
 
-    List<HistorialItem> log;
+    private List<HistorialItem> log;
+
+    private static boolean servicioIniciado = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto);
+
 
         log = new ArrayList<HistorialItem>();
         Bundle bundle = getIntent().getExtras();
@@ -106,13 +97,22 @@ public class ProductoActivity extends MainActivity {
         btnHistorial.setOnClickListener(new ListenerBtnHistorial(log));
 
         address = bundle.getString("deviceAddress");
+        Log.i("ACTIVITY", "onCreate: " + productoActual.getName());
 
-        handlerBluetoothIn = createHandlerBluetooth(getApplicationContext());
-        btMagicboxService = new MagicboxBluetoothService(address, handlerBluetoothIn);
+        handlerBluetoothIn = createHandlerBluetooth(getApplicationContext(), productoActual.getName());
 
-        btMagicboxService.start();
+        if(!servicioIniciado) {
+            btMagicboxService = new MagicboxBluetoothService(address, productoActual.getName());
+        }
 
-        // Le mando la temperatura que necesita el producto actual del contenedor
+        btMagicboxService.setHandler(handlerBluetoothIn);
+        btMagicboxService.setItem(productoActual.getName());
+
+        if(!servicioIniciado) {
+            btMagicboxService.start();
+            servicioIniciado = true;
+        }
+
         btMagicboxService.write(convertirTemperaturaAComando(productoActual.getTemperaturaIdeal()));
 
         sensorProximidad = new SensorProximidad();
@@ -122,10 +122,6 @@ public class ProductoActivity extends MainActivity {
         giroscopio.iniciar(this, btMagicboxService);
     }
 
-
-    // ------------------------------------------------------------
-    //          LISTENERS DE LOS BOTONES
-    // ------------------------------------------------------------
     private View.OnClickListener btnVerListadoProductosListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -135,7 +131,6 @@ public class ProductoActivity extends MainActivity {
         }
     };
 
-    // TODO: Cambiar la URL del Intent por la urlProveedores del productoActual
     private View.OnClickListener btnVerProveedoresListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -152,27 +147,30 @@ public class ProductoActivity extends MainActivity {
         }
     };
 
-    // ------------------------------------------------------------
-    //          MANEJO DE LA COMUNICACION
-    // ------------------------------------------------------------
-
     @Override
     public void onResume() {
         super.onResume();
+        Log.i("ACTIVITY", "onResume: " + productoActual.getName());
+
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
+        Log.i("ACTIVITY", "onStop: " + productoActual.getName());
     }
 
-    //Handler que permite mostrar datos en el Layout al hilo secundario
-    private Handler createHandlerBluetooth (final Context context) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("ACTIVITY", "onPause: " + productoActual.getName());
+    }
+
+    private Handler createHandlerBluetooth (final Context context, final String item) {
         return new Handler() {
             public void handleMessage(android.os.Message msg)
             {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //si se recibio un msj del hilo secundario
                 if (msg.what == 0)
                 {
                     HistorialItem historialItem = new HistorialItem();
@@ -190,19 +188,28 @@ public class ProductoActivity extends MainActivity {
 
                     switch (magicboxCommand) {
                         case 'T': temperaturaView.setText(medicion + " ºC");
+                        Log.i("HANDLER", "Temperatura handler " + item);
                         historialItem.setMedicion(medicion + " ºC");
                         break;
 
                         case 'P': pesoView.setText(medicion + " kg");
+                        Log.i("HANDLER", "Peso handler " + item);
                         historialItem.setMedicion(medicion + " kg");
                         break;
 
                         case 'V': volumenView.setText(medicion + " cm" + Html.fromHtml("<sup>3</sup>"));
+                        Log.i("HANDLER", "Volumen handler " + item);
                         historialItem.setMedicion(medicion + " cm3");
-                        break;
+                            break;
 
                         case 'E':
-                            String estadoContenedor = medicion.equals('0')? "Apagado" : medicion.equals('1')? "Enfriando" : "Calentando";
+                            String estadoContenedor = "Error lectura";
+                            if (medicion.equals("0")) {
+                                estadoContenedor = "Apagado";
+                            } else if(medicion.equals("1")) {
+                                estadoContenedor = "Enfriando";
+                            } else if (medicion.equals("2")) estadoContenedor = "Calentando";
+
                             estadoView.setText(estadoContenedor);
                             historialItem.setMedicion(estadoContenedor);
                         break;

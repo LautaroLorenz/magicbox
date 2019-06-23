@@ -6,13 +6,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.text.Html;
 import android.widget.TextView;
 
-import com.example.magicbox.magicbox.MagicboxBluetoothService;
-import com.example.magicbox.magicbox.activities.BluetoothMagicbox;
-
-import java.io.IOException;
+import com.example.magicbox.magicbox.bluetooth.MagicboxBluetoothService;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -34,18 +30,14 @@ public class Giroscopio {
     }
 
     public void iniciar(final Activity activity, final MagicboxBluetoothService btMagicbox) {
-        // Obtenemos acceso al giroscopio
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
 
-        // Instancio un giroscopio
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
-        // Verifico que el giroscopio este disponible
         if(gyroscopeSensor == null) {
-            activity.finish(); // Sensor no disponible
+            activity.finish();
         }
 
-        // Creo listener para atender los eventos del sensor
         gyroscopeSensorListener = new SensorEventListener() {
 
             @Override
@@ -53,10 +45,10 @@ public class Giroscopio {
                 timestampActual = System.currentTimeMillis();
 
                 if (timestampActual - timestampEventoAnterior > 500) {
-                    if (sensorEvent.values[2] > 0.8f) { // anticlockwise
+                    if (sensorEvent.values[2] > 0.8f) {
                         btMagicbox.write("V".getBytes());
                         activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(178, 235, 242));
-                    } else if (sensorEvent.values[2] < -0.8f) { // clockwise
+                    } else if (sensorEvent.values[2] < -0.8f) {
                         btMagicbox.write("P".getBytes());
                         activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(0, 188, 212));
                     }
@@ -69,14 +61,12 @@ public class Giroscopio {
             }
         };
 
-        // Register the listener
         sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void pausar() {
         sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
-
 
     public void continuar() {
         sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, 2 * 1000 * 1000);

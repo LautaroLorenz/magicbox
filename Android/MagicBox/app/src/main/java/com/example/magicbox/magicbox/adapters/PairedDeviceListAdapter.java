@@ -1,4 +1,4 @@
-package com.example.magicbox.magicbox;
+package com.example.magicbox.magicbox.adapters;
 
 import java.util.List;
 import android.bluetooth.BluetoothDevice;
@@ -12,7 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class PairedDeviceListAdapter extends BaseAdapter{
+import com.example.magicbox.magicbox.R;
+
+public class PairedDeviceListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<BluetoothDevice> mData;
     private OnConnectClickListener mListener;
