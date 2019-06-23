@@ -19,15 +19,17 @@ import android.widget.Toast;
 
 import com.example.magicbox.magicbox.MagicboxBluetoothService;
 import com.example.magicbox.magicbox.R;
+import com.example.magicbox.magicbox.models.HistorialItem;
 import com.example.magicbox.magicbox.models.Product;
 import com.example.magicbox.magicbox.sensores.Giroscopio;
 import com.example.magicbox.magicbox.sensores.SensorProximidad;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class ProductoActivity extends MainActivity {
 
@@ -42,6 +44,7 @@ public class ProductoActivity extends MainActivity {
     private ImageView imagenView;
     private Button btnCambiarProducto;
     private Button btnProveedores;
+    private Button btnHistorial;
     private ImageButton btnMicrofono;
 
     // ------------------------------------------------------------
@@ -57,7 +60,6 @@ public class ProductoActivity extends MainActivity {
     // ------------------------------------------------------------
    private Product productoActual;
 
-
     // ------------------------------------------------------------
     //          COMUNICACION
     // ------------------------------------------------------------
@@ -65,7 +67,7 @@ public class ProductoActivity extends MainActivity {
     Handler handlerBluetoothIn;
     String address;
 
-    List<String> log;
+    List<HistorialItem> log;
 
 
     @Override
@@ -73,6 +75,7 @@ public class ProductoActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto);
 
+        log = new ArrayList<HistorialItem>();
         Bundle bundle = getIntent().getExtras();
 
         productoActual = new Product();
@@ -91,6 +94,7 @@ public class ProductoActivity extends MainActivity {
 
         btnCambiarProducto = (Button) findViewById(R.id.btnCambiarProducto);
         btnProveedores = (Button) findViewById(R.id.btnProveedores);
+        btnHistorial = (Button) findViewById(R.id.btnHistorial);
         btnMicrofono = (ImageButton) findViewById(R.id.btnMicrofono);
 
         imagenView.setImageResource(productoActual.getIdRecursoImagen());
@@ -99,9 +103,7 @@ public class ProductoActivity extends MainActivity {
         btnCambiarProducto.setOnClickListener(btnVerListadoProductosListener);
         btnProveedores.setOnClickListener(btnVerProveedoresListener);
         btnMicrofono.setOnClickListener(btnMicrofonoListener);
-
-
-        log = new ArrayList<>();
+        btnHistorial.setOnClickListener(new ListenerBtnHistorial(log));
 
         address = bundle.getString("deviceAddress");
 
@@ -111,7 +113,7 @@ public class ProductoActivity extends MainActivity {
         btMagicboxService.start();
 
         // Le mando la temperatura que necesita el producto actual del contenedor
-        // btMagicboxService.write("d");
+        btMagicboxService.write(convertirTemperaturaAComando(productoActual.getTemperaturaIdeal()));
 
         sensorProximidad = new SensorProximidad();
         sensorProximidad.iniciar(this, btMagicboxService);
@@ -142,6 +144,7 @@ public class ProductoActivity extends MainActivity {
         }
     };
 
+
     private View.OnClickListener btnMicrofonoListener= new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -168,43 +171,46 @@ public class ProductoActivity extends MainActivity {
         return new Handler() {
             public void handleMessage(android.os.Message msg)
             {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 //si se recibio un msj del hilo secundario
                 if (msg.what == 0)
                 {
-                    String timestamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+                    HistorialItem historialItem = new HistorialItem();
+                    String timestamp = formatter.format(new Date(System.currentTimeMillis()));
+
                     String readMessage = (String) msg.obj;
                     Log.i("HANDLER", readMessage);
 
                     char magicboxCommand = readMessage.charAt(0);
                     String medicion = readMessage.substring(1, readMessage.indexOf('|')).replace("-", "");
 
-                    String logString = timestamp + ": " + medicion;
+                    historialItem.setTimestamp(timestamp);
 
                     boolean mensajeCorrecto = true;
 
                     switch (magicboxCommand) {
                         case 'T': temperaturaView.setText(medicion + " ºC");
-                        logString += " ºC";
+                        historialItem.setMedicion(medicion + " ºC");
                         break;
 
                         case 'P': pesoView.setText(medicion + " kg");
-                        logString += " kg";
+                        historialItem.setMedicion(medicion + " kg");
                         break;
 
                         case 'V': volumenView.setText(medicion + " cm" + Html.fromHtml("<sup>3</sup>"));
-                        logString += " cm3";
+                        historialItem.setMedicion(medicion + " cm3");
                         break;
 
                         case 'E':
                             String estadoContenedor = medicion.equals('0')? "Apagado" : medicion.equals('1')? "Enfriando" : "Calentando";
                             estadoView.setText(estadoContenedor);
-                            logString += " Estado: " + estadoContenedor;
+                            historialItem.setMedicion(estadoContenedor);
                         break;
 
                         case 'Z':
                             String estadoPuerta = medicion.equals('A')? "Abierta" : "Cerrada";
                             Toast.makeText(context, "La puerta se encuentra " + estadoPuerta , Toast.LENGTH_LONG).show();
-                            logString += estadoPuerta;
+                            historialItem.setMedicion(estadoPuerta);
                             break;
 
                         default: mensajeCorrecto = false;
@@ -212,7 +218,7 @@ public class ProductoActivity extends MainActivity {
                     }
 
                     if(mensajeCorrecto) {
-                        log.add(logString);
+                        log.add(historialItem);
                     }
                 }
             }
@@ -242,17 +248,16 @@ public class ProductoActivity extends MainActivity {
                 Log.i("MICROFONO", s);
                 if (s.contains("alarma")) {
                     Log.i("MICROFONO", "Apagando alarma");
-                    btMagicboxService.write("B");
+                    btMagicboxService.write("B".getBytes());
                 } else if (s.contains("estado")) {
                     Log.i("MICROFONO", "Estado contenedor");
-                    btMagicboxService.write("E");
+                    btMagicboxService.write("E".getBytes());
                 } else if(s.contains("puerta")) {
-                    btMagicboxService.write("Z");
+                    btMagicboxService.write("Z".getBytes());
                     }
                 }
             }
     }
-
 
     public void handleBtError(IOException e) {
         e.printStackTrace();
@@ -263,5 +268,26 @@ public class ProductoActivity extends MainActivity {
 
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private class ListenerBtnHistorial implements View.OnClickListener {
+        ArrayList<HistorialItem> log;
+        public ListenerBtnHistorial(List<HistorialItem> log) {
+            this.log = (ArrayList<HistorialItem>) log;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(ProductoActivity.this, HistorialActivity.class);
+            intent.putExtra("lista-historial", log);
+            startActivity(intent);
+        }
+    }
+
+    public byte[] convertirTemperaturaAComando(String temperatura) {
+        int asciiValue = Integer.parseInt(temperatura) + 100;
+
+        String aChar = new Character((char) asciiValue).toString();
+        return aChar.getBytes();
     }
 }

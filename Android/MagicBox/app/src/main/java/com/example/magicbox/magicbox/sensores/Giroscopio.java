@@ -20,10 +20,13 @@ public class Giroscopio {
 
     private SensorManager sensorManager;
     private Sensor gyroscopeSensor;
-    SensorEventListener gyroscopeSensorListener;
+    private SensorEventListener gyroscopeSensorListener;
 
     private TextView pesoView;
     private TextView volumenView;
+
+    private long timestampEventoAnterior = 0;
+    private long timestampActual;
 
     public Giroscopio(TextView pesoView, TextView volumenView) {
         this.pesoView = pesoView;
@@ -44,15 +47,20 @@ public class Giroscopio {
 
         // Creo listener para atender los eventos del sensor
         gyroscopeSensorListener = new SensorEventListener() {
+
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
+                timestampActual = System.currentTimeMillis();
 
-                if(sensorEvent.values[2] > 0.8f) { // anticlockwise
-                    activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(178, 235, 242));
-                    btMagicbox.write("V");
-                } else if(sensorEvent.values[2] < -0.8f) { // clockwise
-                    activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(0, 188, 212));
-                    btMagicbox.write("P");
+                if (timestampActual - timestampEventoAnterior > 500) {
+                    if (sensorEvent.values[2] > 0.8f) { // anticlockwise
+                        btMagicbox.write("V".getBytes());
+                        activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(178, 235, 242));
+                    } else if (sensorEvent.values[2] < -0.8f) { // clockwise
+                        btMagicbox.write("P".getBytes());
+                        activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(0, 188, 212));
+                    }
+                    timestampEventoAnterior = System.currentTimeMillis();
                 }
             }
 

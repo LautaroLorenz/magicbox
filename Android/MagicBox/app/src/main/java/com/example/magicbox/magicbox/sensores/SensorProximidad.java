@@ -47,7 +47,7 @@ public class SensorProximidad {
                 if(sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
                     // Detected something nearby
                     activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(83, 109, 254));
-                    btMagicbox.write("T");
+                    btMagicbox.write("T".getBytes());
 
                 } else {
                     // Nothing is nearby

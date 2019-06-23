@@ -15,8 +15,8 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.PairedDeviceListActivity"></activity>
-        <!-- - Defino la activity Principal -->
+        <activity android:name=".activities.HistorialActivity"></activity>
+        <activity android:name=".activities.PairedDeviceListActivity" /> <!-- - Defino la activity Principal -->
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name">

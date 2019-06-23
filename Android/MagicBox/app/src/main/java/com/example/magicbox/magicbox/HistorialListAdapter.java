@@ -7,16 +7,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.magicbox.magicbox.models.Product;
+import com.example.magicbox.magicbox.models.HistorialItem;
 
 import java.util.List;
 
-public class ProductListAdapter extends ArrayAdapter<Product> {
+public class HistorialListAdapter extends ArrayAdapter<HistorialItem> {
 
     private int resourceLayout;
     private Context mContext;
 
-    public ProductListAdapter(Context context, int resource, List<Product> items) {
+    public HistorialListAdapter(Context context, int resource, List<HistorialItem> items) {
         super(context, resource, items);
         this.resourceLayout = resource;
         this.mContext = context;
@@ -33,27 +33,21 @@ public class ProductListAdapter extends ArrayAdapter<Product> {
             v = vi.inflate(resourceLayout, null);
         }
 
-        Product p = getItem(position);
+        HistorialItem p = getItem(position);
 
         if (p != null) {
-            TextView tt1 = (TextView) v.findViewById(R.id.productlist_item_name);
-            TextView tt2 = (TextView) v.findViewById(R.id.productlist_item_peso);
-            TextView tt3 = (TextView) v.findViewById(R.id.productlist_item_temperaturaIdeal);
+            TextView tt1 = (TextView) v.findViewById(R.id.historial_item_timestamp);
+            TextView tt2 = (TextView) v.findViewById(R.id.historial_item_medicion);
 
             if (tt1 != null) {
-                tt1.setText(p.getName());
+                tt1.setText(p.getTimestamp());
             }
 
             if (tt2 != null) {
-                tt2.setText(p.getPeso());
-            }
-
-            if (tt3 != null) {
-                tt3.setText(p.getTemperaturaIdeal() + " ºC");
+                tt2.setText(p.getMedicion());
             }
         }
 
         return v;
     }
-
 }
