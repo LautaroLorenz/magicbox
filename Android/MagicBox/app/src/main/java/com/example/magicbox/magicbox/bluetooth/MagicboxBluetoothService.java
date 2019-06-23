@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,17 +32,16 @@ public class MagicboxBluetoothService extends Thread {
             btDevice = btAdapter.getRemoteDevice(deviceAddress);
             try {
                 btSocket = btDevice.createRfcommSocketToServiceRecord(BTMODULEUUID);
-               // btSocket.close();
             }
             catch (IOException e) {
-                Log.i("SOCKET","fallo dispositivo "+ item);
+                //Log.i("SOCKET","fallo dispositivo "+ item);
             }
             try {
                 btSocket.connect();
-                Log.i("SOCKET","conectado "+ item);
+                //Log.i("SOCKET","conectado "+ item);
             }
             catch (IOException e) {
-                Log.i("SOCKET","fallo " + item + " " + e.toString());
+                //Log.i("SOCKET","fallo " + item + " " + e.toString());
             }
 
             InputStream tmpIn = null;
@@ -67,7 +65,7 @@ public class MagicboxBluetoothService extends Thread {
         }
 
         public void run() {
-            Log.i("THREAD", "Iniciado " + item);
+            //Log.i("THREAD", "Iniciado " + item);
             byte[] buffer = new byte[256];
             int bytes;
             int cantMensajes = 0;
@@ -78,7 +76,7 @@ public class MagicboxBluetoothService extends Thread {
                     bytes = mmInStream.read(buffer);
                     cantMensajes++;
                     readMessage.append(new String(buffer, 0, bytes));
-                    Log.i("SERVICE", readMessage + " " + item);
+                    //Log.i("SERVICE", readMessage + " " + item);
                     if (cantMensajes == 2) {
 
                         if(readMessage.indexOf("|") != readMessage.length() - 1) {
@@ -107,17 +105,5 @@ public class MagicboxBluetoothService extends Thread {
                 mmOutStream.write(input);
             } catch (IOException e) {
             }
-        }
-
-        public void finalizar () {
-        try {
-            mmInStream.close();
-            mmOutStream.close();
-            btSocket.close();
-        } catch (IOException e1) {
-            //e1.printStackTrace();
-        }
-
-        this.interrupt();
         }
 }

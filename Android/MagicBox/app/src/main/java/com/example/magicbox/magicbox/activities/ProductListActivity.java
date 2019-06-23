@@ -60,10 +60,10 @@ public class ProductListActivity extends Activity{
 
         this.listaProductos = new ArrayList<Product>();
 
-        Product p1 = new Product("Alfajores", "60gr", "16", R.drawable.lechuga, URL_VERDULERIAS);
+        Product p1 = new Product("Galletitas", "500gr", "16", R.drawable.galletitas, URL_SUPERMERCADOS);
         Product p2 = new Product("Huevos", "120gr", "20", R.drawable.huevos, URL_SUPERMERCADOS);
         Product p3 = new Product("Atún", "340gr", "19", R.drawable.atun, URL_SUPERMERCADOS);
-        Product p4 = new Product("Manzanas", "280gr", "15", R.drawable.lechuga, URL_VERDULERIAS);
+        Product p4 = new Product("Manzanas", "280gr", "15", R.drawable.manzana, URL_VERDULERIAS);
         Product p5 = new Product("Paquetes de merca", "400gr", "14", R.drawable.lechuga, URL_SUPERMERCADOS);
 
         this.listaProductos.add(p1);

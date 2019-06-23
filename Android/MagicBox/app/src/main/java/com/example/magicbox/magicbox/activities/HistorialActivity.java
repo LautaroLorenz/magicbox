@@ -14,7 +14,6 @@ import java.util.List;
 public class HistorialActivity extends AppCompatActivity {
 
     private ListView historialListView;
-    private List<String> list = new ArrayList<String>();
     private HistorialListAdapter historialListAdapter;
 
     private List<HistorialItem> listaHistorial;

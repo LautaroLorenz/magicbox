@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
@@ -24,7 +23,6 @@ import com.example.magicbox.magicbox.models.Product;
 import com.example.magicbox.magicbox.sensores.Giroscopio;
 import com.example.magicbox.magicbox.sensores.SensorProximidad;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,7 +95,7 @@ public class ProductoActivity extends MainActivity {
         btnHistorial.setOnClickListener(new ListenerBtnHistorial(log));
 
         address = bundle.getString("deviceAddress");
-        Log.i("ACTIVITY", "onCreate: " + productoActual.getName());
+        //Log.i("ACTIVITY", "onCreate: " + productoActual.getName());
 
         handlerBluetoothIn = createHandlerBluetooth(getApplicationContext(), productoActual.getName());
 
@@ -147,24 +145,6 @@ public class ProductoActivity extends MainActivity {
         }
     };
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("ACTIVITY", "onResume: " + productoActual.getName());
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.i("ACTIVITY", "onStop: " + productoActual.getName());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("ACTIVITY", "onPause: " + productoActual.getName());
-    }
 
     private Handler createHandlerBluetooth (final Context context, final String item) {
         return new Handler() {
@@ -177,7 +157,7 @@ public class ProductoActivity extends MainActivity {
                     String timestamp = formatter.format(new Date(System.currentTimeMillis()));
 
                     String readMessage = (String) msg.obj;
-                    Log.i("HANDLER", readMessage);
+                    //Log.i("HANDLER", readMessage);
 
                     char magicboxCommand = readMessage.charAt(0);
                     String medicion = readMessage.substring(1, readMessage.indexOf('|')).replace("-", "");
@@ -188,17 +168,17 @@ public class ProductoActivity extends MainActivity {
 
                     switch (magicboxCommand) {
                         case 'T': temperaturaView.setText(medicion + " ºC");
-                        Log.i("HANDLER", "Temperatura handler " + item);
+                        //Log.i("HANDLER", "Temperatura handler " + item);
                         historialItem.setMedicion(medicion + " ºC");
                         break;
 
                         case 'P': pesoView.setText(medicion + " kg");
-                        Log.i("HANDLER", "Peso handler " + item);
+                        //Log.i("HANDLER", "Peso handler " + item);
                         historialItem.setMedicion(medicion + " kg");
                         break;
 
                         case 'V': volumenView.setText(medicion + " cm" + Html.fromHtml("<sup>3</sup>"));
-                        Log.i("HANDLER", "Volumen handler " + item);
+                        //Log.i("HANDLER", "Volumen handler " + item);
                         historialItem.setMedicion(medicion + " cm3");
                             break;
 
@@ -215,7 +195,7 @@ public class ProductoActivity extends MainActivity {
                         break;
 
                         case 'Z':
-                            String estadoPuerta = medicion.equals('A')? "Abierta" : "Cerrada";
+                            String estadoPuerta = medicion.equals("A")? "Abierta" : "Cerrada";
                             Toast.makeText(context, "La puerta se encuentra " + estadoPuerta , Toast.LENGTH_LONG).show();
                             historialItem.setMedicion(estadoPuerta);
                             break;
@@ -252,25 +232,18 @@ public class ProductoActivity extends MainActivity {
 
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             for (String s : result) {
-                Log.i("MICROFONO", s);
+                //Log.i("MICROFONO", s);
                 if (s.contains("alarma")) {
-                    Log.i("MICROFONO", "Apagando alarma");
+                    //Log.i("MICROFONO", "Apagando alarma");
                     btMagicboxService.write("B".getBytes());
                 } else if (s.contains("estado")) {
-                    Log.i("MICROFONO", "Estado contenedor");
-                    btMagicboxService.write("E".getBytes());
+                    //Log.i("MICROFONO", "Estado contenedor");
+                     btMagicboxService.write("E".getBytes());
                 } else if(s.contains("puerta")) {
-                    btMagicboxService.write("Z".getBytes());
+                     btMagicboxService.write("Z".getBytes());
                     }
                 }
             }
-    }
-
-    public void handleBtError(IOException e) {
-        e.printStackTrace();
-        showToast("Hubo un error con el bluetooth");
-        Intent intent = new Intent(ProductoActivity.this, MainActivity.class);
-        startActivity(intent);
     }
 
     private void showToast(String message) {

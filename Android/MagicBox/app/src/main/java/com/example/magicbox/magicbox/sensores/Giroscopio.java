@@ -44,7 +44,7 @@ public class Giroscopio {
             public void onSensorChanged(SensorEvent sensorEvent) {
                 timestampActual = System.currentTimeMillis();
 
-                if (timestampActual - timestampEventoAnterior > 500) {
+                if (timestampActual - timestampEventoAnterior > 300) {
                     if (sensorEvent.values[2] > 0.8f) {
                         btMagicbox.write("V".getBytes());
                         activity.getWindow().getDecorView().setBackgroundColor(Color.rgb(178, 235, 242));
