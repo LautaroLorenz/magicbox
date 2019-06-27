@@ -42,8 +42,10 @@ NewPing sonar2(TRIGGER_PIN2, ECHO_PIN2, MAX_DISTANCE);
 NewPing sonar3(TRIGGER_PIN3, ECHO_PIN3, MAX_DISTANCE);
 int luzint = 13;
 int buzzer = 12;
-int magnetico = 4;
 int ventilacion = 16;
+int frio = 17;
+int calor = 18;
+int magnetico = 4;
 Hx711 scale(A1, A0); // Hx711.DOUT - pin #A1 Hx711.SCK - pin #A0
 SoftwareSerial BT(7,8); // 7 RX, 8 TX.  Aquí conectamos los pins RXD,TDX del módulo Bluetooth.
 OneWire ourWire(2); //Se establece el pin 2  como bus OneWire
@@ -68,8 +70,8 @@ void setup() {
   pinMode(luzint, OUTPUT);
   pinMode(buzzer, OUTPUT);
   pinMode(ventilacion, OUTPUT);
-  pinMode(17, OUTPUT);
-  pinMode(18, OUTPUT);
+  pinMode(frio, OUTPUT);
+  pinMode(calor, OUTPUT);
 }
 
 void loop() {
@@ -77,7 +79,7 @@ void loop() {
   if (estaon == LOW) {
     digitalWrite(luzint, LOW);
     isSet = false;
-    comprobarBt(HIGH);
+    comprobarBt();
     sensorTemp.requestTemperatures();   //Se envía el comando para leer la temperatura
     temp = sensorTemp.getTempCByIndex(0); //Se obtiene la temperatura en ºC
     
@@ -95,7 +97,7 @@ void loop() {
     }
   } else {
     digitalWrite(luzint, HIGH);
-    comprobarBt(HIGH);
+    comprobarBt();
     apagar(LOW);
     if(!isSet)
     {
@@ -108,10 +110,9 @@ void loop() {
       march();
     }
   }
-  delay(1000);
 }
 
-int comprobarBt(int estadoPuerta){
+int comprobarBt(){
   if(BT.available()){
     lectura = BT.read();
     if(lectura == "84"){
@@ -153,10 +154,8 @@ void enviarTemp(){
   Serial.print("Temperatura = ");
   Serial.print(temp);
   Serial.println(" °C");
-  //BT.write("Temperatura = ");
   BT.write(msj);
   BT.write("|");
-  //BT.write(" °C\n");
 }
 
 int apagarBuzzer(){
@@ -172,10 +171,8 @@ void enviarPeso(){
   Serial.print("Peso Medido = ");
   Serial.print(peso);
   Serial.println(" Kg");
-  //BT.write("Peso Medido = ");
   BT.write(msj);
   BT.write("|");
-  //BT.write(" Kg\n");
 }
 
 void enviarEstadoPuerta(){
@@ -201,7 +198,6 @@ void enviarEstado(){
 }
 
 void enviarVolumen(){
-  
   float total;
   int uS = sonar.ping_median();
   total = (profundidad - (uS / US_ROUNDTRIP_CM));
@@ -214,10 +210,8 @@ void enviarVolumen(){
   Serial.print("Espacio Volumetrico ocupado = ");
   Serial.print(total);
   Serial.println(" Cm^3");
-  //BT.write("Espacio Volumetrico ocupado = ");
   BT.write(msj);
   BT.write("|");
-  //BT.write(" Cm^3\n");
 }
 
 void encenderFrio()
@@ -225,9 +219,9 @@ void encenderFrio()
   if(estado != "Frio"){
     estado = "Frio";
     Serial.println("se ah encendido el frio");
-    digitalWrite(17, HIGH);
-    digitalWrite(18, LOW);
-    digitalWrite(16, HIGH);
+    digitalWrite(frio, HIGH);
+    digitalWrite(calor, LOW);
+    digitalWrite(ventilacion, HIGH);
   }
 }
 void encenderCalor()
@@ -235,9 +229,9 @@ void encenderCalor()
   if(estado != "Calor"){
     estado = "Calor";
     Serial.println("se ah encendido el calor");
-    digitalWrite(17, LOW);
-    digitalWrite(18, HIGH);
-    digitalWrite(16, HIGH);
+    digitalWrite(frio, LOW);
+    digitalWrite(calor, HIGH);
+    digitalWrite(ventilacion, HIGH);
   }
 }
 
@@ -246,16 +240,16 @@ void apagar(float tempMed)
   if (estado == "Frio" && (tempMed < temprop)){
     estado = "Apagado";
     Serial.println("se ah apagado el Dispositivo");
-    digitalWrite(17, LOW);
-    digitalWrite(18, LOW);
-    digitalWrite(16, LOW);
+    digitalWrite(frio, LOW);
+    digitalWrite(calor, LOW);
+    digitalWrite(ventilacion, LOW);
   }
   if (estado == "Calor" && (tempMed > temprop)){
     estado = "Apagado";
     Serial.println("se ah apagado el Dispositivo");
-    digitalWrite(17, LOW);
-    digitalWrite(18, LOW);
-    digitalWrite(16, LOW);
+    digitalWrite(frio, LOW);
+    digitalWrite(calor, LOW);
+    digitalWrite(ventilacion, LOW);
   } 
 }
 
@@ -264,20 +258,25 @@ void apagar(int x)
   if (x == LOW && estado != "Apagado"){
     estado = "Apagado";
     Serial.println("se ah apagado el Dispositivo");
-    digitalWrite(17, LOW);
-    digitalWrite(18, LOW);
-    digitalWrite(16, LOW);
+    digitalWrite(frio, LOW);
+    digitalWrite(calor, LOW);
+    digitalWrite(ventilacion, LOW);
   }
 }
 
 void beep (unsigned char buzzer, int frequencyInHertz, long timeInMilliseconds)
 { 
     digitalWrite(luzint, HIGH);  
-    int x;   
+    int x;
+    int tiempo1;   
     long delayAmount = (long)(1000000/frequencyInHertz);
     long loopTime = (long)((timeInMilliseconds*1000)/(delayAmount*2));
     for (x=0;x<loopTime;x++)   
     {    
+        estaon = digitalRead(magnetico);
+        if (estaon == LOW){
+          return;
+        }
         digitalWrite(buzzer,HIGH);
         delayMicroseconds(delayAmount);
         digitalWrite(buzzer,LOW);
@@ -285,6 +284,14 @@ void beep (unsigned char buzzer, int frequencyInHertz, long timeInMilliseconds)
     }    
     
     digitalWrite(luzint, LOW);
+    //tiempo1 = millis();
+    //while(millis()<(tiempo1+20))
+    //{
+    //  estaon = digitalRead(magnetico);
+    //  if (estaon == LOW){
+    //    return;
+    //  }
+    //}
     delay(20);
 }    
      
@@ -296,7 +303,7 @@ void march()
     beep(buzzer, f, 350); 
     beep(buzzer, cH, 150);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW){
+    if (estaon == LOW || comprobarBt() == LOW){
       return;
     }
     
@@ -305,7 +312,7 @@ void march()
     beep(buzzer, cH, 150);
     beep(buzzer, a, 1000);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -315,7 +322,7 @@ void march()
     beep(buzzer, fH, 350); 
     beep(buzzer, cH, 150);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -324,7 +331,7 @@ void march()
     beep(buzzer, cH, 150);
     beep(buzzer, a, 1000);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -335,7 +342,7 @@ void march()
     beep(buzzer, gSH, 250); 
     beep(buzzer, gH, 250);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -343,7 +350,7 @@ void march()
     beep(buzzer, fH, 125);    
     beep(buzzer, fSH, 250);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     delay(250);
@@ -352,7 +359,7 @@ void march()
     beep(buzzer, dH, 250);  
     beep(buzzer, cSH, 250);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -360,7 +367,7 @@ void march()
     beep(buzzer, b, 125);  
     beep(buzzer, cH, 250);      
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     delay(250);
@@ -369,7 +376,7 @@ void march()
     beep(buzzer, f, 375);  
     beep(buzzer, a, 125);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -377,7 +384,7 @@ void march()
     beep(buzzer, a, 375);  
     beep(buzzer, cH, 125); 
     beep(buzzer, eH, 1000);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -388,7 +395,7 @@ void march()
     beep(buzzer, gSH, 250); 
     beep(buzzer, gH, 250);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -396,7 +403,7 @@ void march()
     beep(buzzer, fH, 125);    
     beep(buzzer, fSH, 250);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     delay(250);
@@ -406,7 +413,7 @@ void march()
     beep(buzzer, cSH, 250);  
     //repeat... repeat
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     
@@ -414,7 +421,7 @@ void march()
     beep(buzzer, b, 125);  
     beep(buzzer, cH, 250);      
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
     delay(250);
@@ -423,7 +430,7 @@ void march()
     beep(buzzer, f, 375);  
     beep(buzzer, cH, 125);
     estaon = digitalRead(magnetico);
-    if (estaon == LOW || comprobarBt(HIGH) == LOW) {
+    if (estaon == LOW || comprobarBt() == LOW) {
       return;
     }
            
