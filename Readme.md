@@ -4,7 +4,7 @@
 [Lorenz Marcelo Gabriel](https://github.com/M-G-Lorenz)  
 [Flores Cristian](https://github.com/crisflores)  
 [Lorenz Lautaro Enrique](https://github.com/LautaroLorenz)  
-[Maciel Gabriel](https://github.com/maximilianonahuelmercado)  
+[Maciel Gabriel](https://github.com/gabriel-maciel)  
 [Mercado Maximiliano](https://github.com/maximilianonahuelmercado)  
 
 ### Presentación
