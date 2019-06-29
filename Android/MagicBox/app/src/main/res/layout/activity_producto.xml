@@ -1,230 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/title-contenedor"
-        android:layout_width="197dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Estado contenedor"
-        android:textAppearance="@android:style/TextAppearance.Material.Title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.116"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.011" />
-
-    <TextView
-        android:id="@+id/label-temperatura"
-        android:layout_width="103dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Temperatura"
-        android:textAppearance="@android:style/TextAppearance.Material.Body2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.119"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title-contenedor"
-        app:layout_constraintVertical_bias="0.029" />
-
-    <TextView
-        android:id="@+id/text-temperatura"
-        android:layout_width="wrap_content"
-        android:layout_height="19dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="..."
-        android:textAppearance="@android:style/TextAppearance.Material.Small"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.095"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label-temperatura"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageButton
-        android:id="@+id/btnMicrofono"
-        android:layout_width="58dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:src="@android:drawable/presence_audio_busy"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.549"
-        app:layout_constraintStart_toEndOf="@+id/label-temperatura"
-        app:layout_constraintTop_toBottomOf="@+id/title-contenedor"
-        app:layout_constraintVertical_bias="0.001" />
-
-    <TextView
-        android:id="@+id/text_estado"
-        android:layout_width="135dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="..."
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.846"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnMicrofono"
-        app:layout_constraintVertical_bias="0.032" />
+    <TableRow>
+        <TextView
+            android:padding="15dp"
+            android:id="@+id/title-contenedor"
+            android:text="Estado contenedor"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"/>
+    </TableRow>
 
 
-    <TextView
-        android:id="@+id/product_nombre"
-        android:layout_width="187dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="..."
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.158"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.307" />
+    <TableRow
+        android:padding="15dp">
 
-    <ImageView
-        android:id="@+id/product_image"
-        android:layout_width="133dp"
-        android:layout_height="102dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.111"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.453"
-        app:srcCompat="@android:drawable/editbox_dropdown_light_frame" />
+            <ImageView
+                android:id="@+id/product_image"
+                android:layout_width="133dp"
+                android:layout_height="102dp"
+                app:srcCompat="@android:drawable/editbox_dropdown_light_frame" />
 
-    <TextView
-        android:id="@+id/label-volumen"
-        android:layout_width="119dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="340dp"
-        android:text="Volumen ocupado"
-        android:textAppearance="@android:style/TextAppearance.Material.Body2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        <TableLayout>
+            <TableRow
+                android:padding="5dp">
+                <TextView
+                    android:id="@+id/product_nombre"
+                    android:text="..."
+                    android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
+            </TableRow>
 
-    <TextView
-        android:id="@+id/product_volumen"
-        android:layout_width="wrap_content"
-        android:layout_height="19dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="..."
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label-volumen"
-        app:layout_constraintVertical_bias="0.027" />
+            <TableRow>
+                <ImageButton
+                    android:padding="15dp"
+                    android:id="@+id/btnMicrofono"
+                    android:src="@android:drawable/presence_audio_busy" />
+            </TableRow>
+        </TableLayout>
+    </TableRow>
 
 
-    <TextView
-        android:id="@+id/label-peso"
-        android:layout_width="63dp"
-        android:layout_height="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Peso"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.662"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.569" />
+    <TableRow
+        android:padding="15dp">
+            <TextView
+                android:id="@+id/label-temperatura"
+                android:text="Temperatura"
+                android:textAppearance="@android:style/TextAppearance.Material.Body2"/>
+
+            <TextView
+                android:id="@+id/text-temperatura"
+                android:text="..."
+                android:textAppearance="@android:style/TextAppearance.Material.Small"/>
+    </TableRow>
+
+    <TableRow
+        android:padding="15dp">
+
+            <TextView
+                android:id="@+id/label-volumen"
+                android:text="Volumen ocupado"
+                android:textAppearance="@android:style/TextAppearance.Material.Body2" />
+
+            <TextView
+                android:id="@+id/product_volumen"
+                android:text="..." />
+    </TableRow>
+
+    <TableRow
+        android:padding="15dp">
+            <TextView
+                android:id="@+id/label-peso"
+                android:text="Peso"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+            <TextView
+                android:id="@+id/product_peso"
+                android:text="..."/>
+    </TableRow>
+
+    <TableRow
+        android:padding="15dp">
+            <TextView
+                android:id="@+id/label-estado"
+                android:text="Estado"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+        <TextView
+            android:id="@+id/text_estado"
+            android:text="..."
+            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+    </TableRow>
 
 
-    <TextView
-        android:id="@+id/product_peso"
-        android:layout_width="112dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="..."
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.78"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label-peso"
-        app:layout_constraintVertical_bias="0.049" />
 
-    <Button
-        android:id="@+id/btnHistorial"
-        style="@android:style/Widget.Material.Light.Button.Small"
-        android:layout_width="212dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="160dp"
-        android:text="Ver Historial"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent" />
+    <TableRow
+        android:gravity="center_horizontal">
+            <Button
+                android:padding="15dp"
+                android:id="@+id/btnHistorial"
+                style="@android:style/Widget.Material.Light.Button.Small"
+                android:text="Ver Historial"/>
+    </TableRow>
 
-    <Button
-        android:id="@+id/btnProveedores"
-        style="@android:style/Widget.Material.Light.Button.Small"
-        android:layout_width="212dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="104dp"
-        android:text="Ver Proveedores"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent" />
+    <TableRow
+        android:gravity="center_horizontal">
+            <Button
+                    android:padding="15dp"
+                    android:id="@+id/btnProveedores"
+                    style="@android:style/Widget.Material.Light.Button.Small"
+                    android:text="Ver Proveedores"/>
+    </TableRow>
 
-    <Button
-        android:id="@+id/btnCambiarProducto"
-        style="@android:style/Widget.Material.Light.Button.Small"
-        android:layout_width="212dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="40dp"
-        android:text="Cambiar producto"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</android.support.constraint.ConstraintLayout>
+    <TableRow
+        android:gravity="center_horizontal">
+            <Button
+                android:padding="15dp"
+                android:id="@+id/btnCambiarProducto"
+                style="@android:style/Widget.Material.Light.Button.Small"
+                android:text="Cambiar producto"
+                />
+    </TableRow>
+</TableLayout>
