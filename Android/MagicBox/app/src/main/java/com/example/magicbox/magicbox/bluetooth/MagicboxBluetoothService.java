@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,14 +35,14 @@ public class MagicboxBluetoothService extends Thread {
                 btSocket = btDevice.createRfcommSocketToServiceRecord(BTMODULEUUID);
             }
             catch (IOException e) {
-                //Log.i("SOCKET","fallo dispositivo "+ item);
+                Log.i("SOCKET","fallo dispositivo "+ item);
             }
             try {
                 btSocket.connect();
-                //Log.i("SOCKET","conectado "+ item);
+                Log.i("SOCKET","conectado "+ item);
             }
             catch (IOException e) {
-                //Log.i("SOCKET","fallo " + item + " " + e.toString());
+                Log.i("SOCKET","fallo " + item + " " + e.toString());
             }
 
             InputStream tmpIn = null;
@@ -65,29 +66,32 @@ public class MagicboxBluetoothService extends Thread {
         }
 
         public void run() {
-            //Log.i("THREAD", "Iniciado " + item);
+            Log.i("THREAD", "Iniciado " + item);
             byte[] buffer = new byte[256];
-            int bytes;
-            int cantMensajes = 0;
+            int bytesLeidos = 0;
+            int bytesTotales = 0;
             StringBuilder readMessage = new StringBuilder();
 
             while (!finalizado) {
                 try {
-                    bytes = mmInStream.read(buffer);
-                    cantMensajes++;
-                    readMessage.append(new String(buffer, 0, bytes));
-                    //Log.i("SERVICE", readMessage + " " + item);
-                    if (cantMensajes == 2) {
 
-                        if(readMessage.indexOf("|") != readMessage.length() - 1) {
-                            while ((mmInStream.read(buffer)) != -1) {
-                            }
-                        }
-
-                        handlerBluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage.toString()).sendToTarget();
-                        cantMensajes = 0;
-                        readMessage = new StringBuilder();
+                    while(readMessage.indexOf("|") == -1) {
+                        bytesLeidos = mmInStream.read(buffer);
+                        bytesTotales += bytesLeidos;
+                        readMessage.append(new String(buffer, 0, bytesLeidos));
                     }
+
+                    if(readMessage.indexOf("|") != readMessage.length() - 1) {
+                        while ((mmInStream.read(buffer)) != -1) {
+                        }
+                    }
+
+                    Log.i("SERVICE " + item, readMessage + "");
+                    handlerBluetoothIn.obtainMessage(handlerState, bytesTotales, -1, readMessage.toString()).sendToTarget();
+                    readMessage = new StringBuilder();
+                    buffer = new byte[256];
+                    bytesTotales = 0;
+
                 } catch (IOException e) {
                 }
             }
@@ -102,6 +106,7 @@ public class MagicboxBluetoothService extends Thread {
 
         public void write(byte[] input) {
             try {
+                Log.i("SERVICE " + item, "Escribiendo bluetooth");
                 mmOutStream.write(input);
             } catch (IOException e) {
             }

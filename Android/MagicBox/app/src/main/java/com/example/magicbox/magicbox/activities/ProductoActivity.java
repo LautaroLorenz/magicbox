@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
@@ -157,7 +158,7 @@ public class ProductoActivity extends MainActivity {
                     String timestamp = formatter.format(new Date(System.currentTimeMillis()));
 
                     String readMessage = (String) msg.obj;
-                    //Log.i("HANDLER", readMessage);
+                    Log.i("HANDLER", readMessage);
 
                     char magicboxCommand = readMessage.charAt(0);
                     String medicion = readMessage.substring(1, readMessage.indexOf('|')).replace("-", "");
@@ -168,17 +169,17 @@ public class ProductoActivity extends MainActivity {
 
                     switch (magicboxCommand) {
                         case 'T': temperaturaView.setText(medicion + " ºC");
-                        //Log.i("HANDLER", "Temperatura handler " + item);
+                        Log.i("HANDLER", "Temperatura handler " + item);
                         historialItem.setMedicion(medicion + " ºC");
                         break;
 
                         case 'P': pesoView.setText(medicion + " kg");
-                        //Log.i("HANDLER", "Peso handler " + item);
+                        Log.i("HANDLER", "Peso handler " + item);
                         historialItem.setMedicion(medicion + " kg");
                         break;
 
                         case 'V': volumenView.setText(medicion + " cm" + Html.fromHtml("<sup>3</sup>"));
-                        //Log.i("HANDLER", "Volumen handler " + item);
+                        Log.i("HANDLER", "Volumen handler " + item);
                         historialItem.setMedicion(medicion + " cm3");
                             break;
 
@@ -232,18 +233,54 @@ public class ProductoActivity extends MainActivity {
 
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             for (String s : result) {
-                //Log.i("MICROFONO", s);
+                Log.i("MICROFONO", s);
                 if (s.contains("alarma")) {
-                    //Log.i("MICROFONO", "Apagando alarma");
+                    Log.i("MICROFONO", "Apagando alarma"  + productoActual.getName());
                     btMagicboxService.write("B".getBytes());
                 } else if (s.contains("estado")) {
-                    //Log.i("MICROFONO", "Estado contenedor");
+                    Log.i("MICROFONO", "Estado contenedor"  + productoActual.getName());
                      btMagicboxService.write("E".getBytes());
                 } else if(s.contains("puerta")) {
                      btMagicboxService.write("Z".getBytes());
-                    }
+                    Log.i("MICROFONO", "Estado Puerta"  + productoActual.getName());
+                }
                 }
             }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("ACTIVITY", "onStart"  + productoActual.getName());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("ACTIVITY", "onResume"  + productoActual.getName());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("ACTIVITY", "onPause"  + productoActual.getName());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("ACTIVITY", "onStop"  + productoActual.getName());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("ACTIVITY", "onRestart" + productoActual.getName());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     private void showToast(String message) {
